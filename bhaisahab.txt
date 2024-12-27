@@ -1,0 +1,9 @@
+clerk
+clerk element (Beta)
+shadcn.ui
+hyperui
+logoipsum
+drizzle
+postgreSQL
+uuid-- unique ids everytime generated chat
+moment - for time records
