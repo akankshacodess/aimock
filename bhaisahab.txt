@@ -12,3 +12,6 @@ react-webcam - web cam permission
         -> on user media error (false)
         -> mirrored = {true}
 lucide.dev - icons 
+react-hook-speech-to-text
+
+SpeechSynthesisUtterance = web Speech API interface -- speech req (lang, pitch, vol ) 
