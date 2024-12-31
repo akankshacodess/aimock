@@ -50,7 +50,7 @@ function Interview({ params }) {
                   <strong>Job Description/Tech Stack: </strong> {interviewData.jobDesc}
                 </h2>
                 <h2 className="text-lg">
-                  <strong>Years of Experience: </strong> {interviewData.jobExperience}
+                  <strong>Years of Experience: </strong> {interviewData.jobExperiene}
                 </h2>
               </>
             ) : (
