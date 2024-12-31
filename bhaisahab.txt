@@ -7,3 +7,8 @@ drizzle
 postgreSQL
 uuid-- unique ids everytime generated chat
 moment - for time records
+react-webcam - web cam permission 
+<Webcam -> on user media (true)
+        -> on user media error (false)
+        -> mirrored = {true}
+lucide.dev - icons 
