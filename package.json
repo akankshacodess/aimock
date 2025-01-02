@@ -16,6 +16,7 @@
     "@electric-sql/pglite": "^0.2.12",
     "@google/generative-ai": "^0.21.0",
     "@neondatabase/serverless": "^0.10.3",
+    "@radix-ui/react-collapsible": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",

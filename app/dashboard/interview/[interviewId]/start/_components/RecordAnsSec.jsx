@@ -7,11 +7,12 @@ import useSpeechToText from 'react-hook-speech-to-text';
 import { Mic } from "lucide-react";
 // import { ChatSession } from "@google/generative-ai";
 import { chatSession } from "@/utils/AiGemini";
+import { useUser } from "@clerk/nextjs";
 
 function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData}) {
-    const [userAnswer,setUserAnswer] = useState()
+    const [userAnswer,setUserAnswer] = useState(0)
     const {user} = useUser();
-    const [loading,setLoading] = useState();
+    const [loading,setLoading] = useState(false);
 
     const {
         error,
@@ -20,6 +21,7 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
         results,
         startSpeechToText,
         stopSpeechToText,
+        setResults
       } = useSpeechToText({
         continuous: true,
         useLegacyResults: false
@@ -31,15 +33,31 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
         ))
       },[results])
 
-      const SaveUserAns = async () =>{
-        if(isRecording){
-          stopSpeechToText()
-          if(userAnswer?.length<10){
-            toast('Error while saving your answer, Please try again')
-            return ;
-          }
+      useEffect(()=>{  // user state not updating sync
+        if(!isRecording && userAnswer.length >10){
+          updateUserAnsInDb();
+        }
+        
+      },[userAnswer])
 
-          const feedbackPrompt = "Question:"+ mockInterviewQuestion[activeQuestionIndex]?.question+", User Answer:"+userAnswer+", Depends on question and user answer for give interview question"+" please give us rating for answer and feedback as area of improvement if any"+" in just 3 to 5 lines to improve it in JSON format with rating field and feedback field"
+      const StartStopRecording = async () =>{
+        if(isRecording){
+
+          stopSpeechToText()
+          
+
+        }
+        else{
+          startSpeechToText();
+        }
+      }
+
+      const updateUserAnsInDb = async () => {
+
+        console.log(userAnswer);
+        
+        setLoading(true)
+        const feedbackPrompt = "Question:"+ mockInterviewQuestion[activeQuestionIndex]?.question+", User Answer:"+userAnswer+", Depends on question and user answer for give interview question"+" please give us rating for answer and feedback as area of improvement if any"+" in just 3 to 5 lines to improve it in JSON format with rating field and feedback field"
 
           const result = await chatSession.sendMessage(feedbackPrompt);
 
@@ -59,14 +77,13 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
             createdAt:moment().format('DD-MM-yyyy')
           })
 
-          if(response){
+          if(resp){
             toast('user answer recorded successfully')
+            setUserAnswer('');
+            setResults([]);
           }
-
-        }
-        else{
-          startSpeechToText();
-        }
+          setResults([]);
+          setLoading(false);
       }
 
       if(error) return (console.log(error))
@@ -90,13 +107,15 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
         />
       </div>
 
-      <Button variant="outline" className="my-10" onClick={SaveUserAns}> 
+      <Button
+      
+      variant="outline" className="my-10" onClick={StartStopRecording}> 
         {isRecording?
         <h2 className="text-red-600 flex">
             <Mic className="mr-1"/> Stop Recording
         </h2> : 'Record Answer'} </Button>
 
-        <Button onClick={()=> console.log(userAnswer)}>Show User Answer</Button>
+        {/* <Button onClick={()=> console.log(userAnswer)}>Show User Answer</Button> */}
 
       {/* <h1>Recording: {isRecording.toString()}</h1>
       <button onClick={isRecording ? stopSpeechToText : startSpeechToText}>
