@@ -76,3 +76,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.active-ques {
+  color: white;
+  background-color: rgb(0, 0, 189);
+}

@@ -13,8 +13,8 @@ export const MockInterview = pgTable("mockInterview", {
 
 export const userAnswer = pgTable("userAnswer", {
   id: serial("id").primaryKey(),
-  mockIdRef: varchar("mockId").notNull(),
-  question: varchar("question ").notNull(),
+  mockIdRef: varchar("mockIdRef").notNull(),
+  question: varchar("question").notNull(),
   correctAns: text("correctAns"),
   userAns: text("userAns"),
   feedback: text("feedback"),
