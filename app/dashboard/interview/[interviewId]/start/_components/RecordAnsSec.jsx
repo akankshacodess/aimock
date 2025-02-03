@@ -1,92 +1,100 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
-import useSpeechToText from 'react-hook-speech-to-text';
+import useSpeechToText from "react-hook-speech-to-text";
 import { Mic } from "lucide-react";
 // import { ChatSession } from "@google/generative-ai";
 import { chatSession } from "@/utils/AiGemini";
 import { useUser } from "@clerk/nextjs";
 
-function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData}) {
-    const [userAnswer,setUserAnswer] = useState(0)
-    const {user} = useUser();
-    const [loading,setLoading] = useState(false);
+function RecordAnsSec({
+  mockInterviewQuestion,
+  activeQuestionIndex,
+  interviewData,
+}) {
+  const [userAnswer, setUserAnswer] = useState(0);
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
 
-    const {
-        error,
-        interimResult,
-        isRecording,
-        results,
-        startSpeechToText,
-        stopSpeechToText,
-        setResults
-      } = useSpeechToText({
-        continuous: true,
-        useLegacyResults: false
-      });
+  const {
+    error,
+    interimResult,
+    isRecording,
+    results,
+    startSpeechToText,
+    stopSpeechToText,
+    setResults,
+  } = useSpeechToText({
+    continuous: true,
+    useLegacyResults: false,
+  });
 
-      useEffect(()=>{
-        results.map((result)=>(
-            setUserAnswer(prevAns => prevAns + result?.transcript)
-        ))
-      },[results])
+  useEffect(() => {
+    results.map((result) =>
+      setUserAnswer((prevAns) => prevAns + result?.transcript)
+    );
+  }, [results]);
 
-      useEffect(()=>{  // user state not updating sync
-        if(!isRecording && userAnswer.length >10){
-          updateUserAnsInDb();
-        }
-        
-      },[userAnswer])
+  useEffect(() => {
+    // user state not updating sync
+    if (!isRecording && userAnswer.length > 10) {
+      updateUserAnsInDb();
+    }
+  }, [userAnswer]);
 
-      const StartStopRecording = async () =>{
-        if(isRecording){
+  const StartStopRecording = async () => {
+    if (isRecording) {
+      stopSpeechToText();
+    } else {
+      startSpeechToText();
+    }
+  };
 
-          stopSpeechToText()
-          
+  const updateUserAnsInDb = async () => {
+    console.log(userAnswer);
 
-        }
-        else{
-          startSpeechToText();
-        }
-      }
+    setLoading(true);
+    const feedbackPrompt =
+      "Question:" +
+      mockInterviewQuestion[activeQuestionIndex]?.question +
+      ", User Answer:" +
+      userAnswer +
+      ", Depends on question and user answer for give interview question" +
+      " please give us rating for answer and feedback as area of improvement if any" +
+      " in just 3 to 5 lines to improve it in JSON format with rating field and feedback field";
 
-      const updateUserAnsInDb = async () => {
+    const result = await chatSession.sendMessage(feedbackPrompt);
 
-        console.log(userAnswer);
-        
-        setLoading(true)
-        const feedbackPrompt = "Question:"+ mockInterviewQuestion[activeQuestionIndex]?.question+", User Answer:"+userAnswer+", Depends on question and user answer for give interview question"+" please give us rating for answer and feedback as area of improvement if any"+" in just 3 to 5 lines to improve it in JSON format with rating field and feedback field"
+    const mockJsonResp = result.response
+      .text()
+      .replace("```json", "")
+      .replace("```", "");
+    console.log(mockJsonResp);
+    const JsonFeedbackResp = JSON.parse(mockJsonResp);
 
-          const result = await chatSession.sendMessage(feedbackPrompt);
+    const resp = await db.insert(userAnswer).values({
+      mockIdRef: interviewData?.mockId,
+      question: mockInterviewQuestion[activeQuestionIndex]?.question,
+      correctAns: mockInterviewQuestion[activeQQuestionIndex]?.answer,
+      userAns: userAnswer,
+      feedback: JsonFeedbackResp?.feedback,
+      rating: JsonFeedbackResp?.rating,
+      userEmail: user?.primaryEmailAddress?.emailAddress,
+      createdAt: moment().format("DD-MM-yyyy"),
+    });
 
-          const mockJsonResp = (result.response.text()).replace('```json','').replace('```','')
-          console.log(mockJsonResp);
-          const JsonFeedbackResp = JSON.parse(mockJsonResp);
+    if (resp) {
+      toast("user answer recorded successfully");
+      setUserAnswer("");
+      setResults([]);
+    }
+    setResults([]);
+    setLoading(false);
+  };
 
-          const resp = await db.insert(userAnswer)
-          .values({
-            mockIdRef:interviewData?.mockId,
-            question:mockInterviewQuestion[activeQuestionIndex]?.question,
-            correctAns:mockInterviewQuestion[activeQQuestionIndex]?.answer,
-            userAns:userAnswer,
-            feedback:JsonFeedbackResp?.feedback,
-            rating:JsonFeedbackResp?.rating,
-            userEmail: user?.primaryEmailAddress?.emailAddress,
-            createdAt:moment().format('DD-MM-yyyy')
-          })
-
-          if(resp){
-            toast('user answer recorded successfully')
-            setUserAnswer('');
-            setResults([]);
-          }
-          setResults([]);
-          setLoading(false);
-      }
-
-      if(error) return (console.log(error))
+  if (error) return console.log(error);
   return (
     <div className="flex items-center justify-center flex-col">
       <div className="flex flex-col md:mt-20 sm:mt-5 justify-center items-center bg-black rounded-lg p-5">
@@ -107,15 +115,17 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
         />
       </div>
 
-      <Button
-      
-      variant="outline" className="my-10" onClick={StartStopRecording}> 
-        {isRecording?
-        <h2 className="text-red-600 flex">
-            <Mic className="mr-1"/> Stop Recording
-        </h2> : 'Record Answer'} </Button>
+      <Button variant="outline" className="my-10" onClick={StartStopRecording}>
+        {isRecording ? (
+          <h2 className="text-red-600 flex">
+            <Mic className="mr-1" /> Stop Recording
+          </h2>
+        ) : (
+          "Record Answer"
+        )}{" "}
+      </Button>
 
-        {/* <Button onClick={()=> console.log(userAnswer)}>Show User Answer</Button> */}
+      {/* <Button onClick={()=> console.log(userAnswer)}>Show User Answer</Button> */}
 
       {/* <h1>Recording: {isRecording.toString()}</h1>
       <button onClick={isRecording ? stopSpeechToText : startSpeechToText}>
@@ -127,7 +137,6 @@ function RecordAnsSec({mockInterviewQuestion,activeQuestionIndex,interviewData})
         ))}
         {interimResult && <li>{interimResult}</li>}
       </ul> */}
-
     </div>
   );
 }
