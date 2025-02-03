@@ -52,7 +52,7 @@ function AddNewInterview() {
       jsonMockResp: MockJSONResp,
       jobPosition:jobPosition,
       jobDesc:jobDesc,
-      jobExperiene:jobExperience,
+      jobExperience:jobExperience,
       createdBy:user?.primaryEmailAddress?.emailAddress,
       createdAt:moment().format('DD-MM-yyyy')
 
@@ -173,11 +173,11 @@ function AddNewInterview() {
                   <button
                     disabled={loading}
                     type="submit"
-                    className="border rounded  p-2 bg-blue-600 text-white hover:bg-blue-400 "
+                    className="border rounded  p-2 bg-blue-600 text-white hover:bg-blue-400"
                   >
                     {loading? 
                     <>
-                    <LoaderCircle className="animate-spin"/> Generating </> : 'Start Interview'
+                    <LoaderCircle className="animate-spin "/> Generating </> : 'Start Interview'
                     }
                   </button>
                 </div>

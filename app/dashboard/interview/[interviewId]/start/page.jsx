@@ -4,16 +4,16 @@ import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import QuestionsSec from "./_components/questionsSec";
+import RecordAnsSec from "./_components/RecordAnsSec";
 
 function StartInterview({ params }) {
   // from param we get interview id
   const unwrappedParams = React.use(params);
-    const { interviewId } = unwrappedParams;
-
+  const { interviewId } = unwrappedParams;
   const [interviewData, setInterviewData] = useState();
-  const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
+  const [mockInterviewQuestion,setMockInterviewQuestion] = useState();
 
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(3);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   useEffect(() => {
     GetInterviewDetails();
   }, []);
@@ -35,12 +35,19 @@ function StartInterview({ params }) {
   };
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Questions */}
 
         <QuestionsSec
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
+        />
+
+        {/* Answer Record */}
+        <RecordAnsSec
+        mockInterviewQuestion={mockInterviewQuestion}
+        activeQuestionIndex={activeQuestionIndex}
+        interviewData = {interviewData}
         />
       </div>
       <div></div>
