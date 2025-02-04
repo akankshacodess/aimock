@@ -43,6 +43,7 @@ function StartInterview({ params }) {
         <QuestionsSec
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
+          setActiveQuestionIndex = {setActiveQuestionIndex}
         />
 
         {/* Answer Record */}

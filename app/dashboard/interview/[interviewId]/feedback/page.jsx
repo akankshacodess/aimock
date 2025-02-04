@@ -1,6 +1,8 @@
 'use client'
+import { useParams } from "next/navigation";
+
 import {db} from '@/utils/db'
-import { userAnswer } from '@/utils/schema';
+import { UserAnswer } from '@/utils/schema';
 import { eq } from 'drizzle-orm';
 import React,{useEffect, useState} from 'react'
 import {
@@ -15,21 +17,45 @@ import { useRouter } from 'next/navigation';
 
 export default function Feedback({params}) {
     const [feedbackList, setFeedbackList] = useState([]);
+    //param changes 
+    const paramsPromise = useParams();
+  
     const router = useRouter();
 
-    useEffect(()=>{
-        GetFeedback();
-    },[])
-    const GetFeedback = async()=>{
-        const result = await db.select()
-        .from(userAnswer)
-        .where(eq(userAnswer.mockIdRef, params.interviewId))
-        .orderBy(userAnswer.id);
+    useEffect(() => {
+        const fetchData = async() => {
+          const params = await paramsPromise; // Wait for params to resolve
+          if (!params?.interviewId) return; // Ensure interviewId exists
+    
+          try {
+            const result = await db
+              .select()
+              .from(UserAnswer)
+              .where(eq(UserAnswer.mockIdRef, params.interviewId))
+              .orderBy(UserAnswer.id);
+    
+            console.log(result);
+            setFeedbackList(result);
+          } catch (error) {
+            console.error("Error fetching feedback:", error);
+          }
+        };
+    
+        fetchData();
+      }, [paramsPromise]); // Runs when params are resolved
+    // useEffect(()=>{
+    //     GetFeedback();
+    // },[])
+    // const GetFeedback = async()=>{
+    //     const result = await db.select()
+    //     .from(UserAnswer)
+    //     .where(eq(UserAnswer.mockIdRef, params.interviewId))
+    //     .orderBy(UserAnswer.id);
 
-        console.log(result);
-        setFeedbackList(result);
+    //     console.log(result);
+    //     setFeedbackList(result);
 
-    }
+    // }
   return (
     <div className='p-10'>
         <h2 className='text-3xl font-bold text-green-500 '>Congratulations</h2>
