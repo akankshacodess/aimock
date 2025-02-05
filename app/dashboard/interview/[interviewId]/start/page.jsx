@@ -10,7 +10,6 @@ import Link from "next/link";
 
 function StartInterview({ params }) {
   // from param we get interview id
-
   const unwrappedParams = React.use(params);
   const { interviewId } = unwrappedParams;
   const [interviewData, setInterviewData] = useState();
@@ -44,6 +43,7 @@ function StartInterview({ params }) {
         <QuestionsSec
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
+          setActiveQuestionIndex = {setActiveQuestionIndex}
         />
 
         {/* Answer Record */}

@@ -8,6 +8,11 @@ import { Mic } from "lucide-react";
 // import { ChatSession } from "@google/generative-ai";
 import { chatSession } from "@/utils/AiGemini";
 import { useUser } from "@clerk/nextjs";
+import { UserAnswer } from "@/utils/schema";
+import { db } from "@/utils/db";
+import moment from "moment";
+import { toast } from "sonner";
+
 
 function RecordAnsSec({
   mockInterviewQuestion,
@@ -74,10 +79,10 @@ function RecordAnsSec({
     console.log(mockJsonResp);
     const JsonFeedbackResp = JSON.parse(mockJsonResp);
 
-    const resp = await db.insert(userAnswer).values({
+    const resp = await db.insert(UserAnswer).values({
       mockIdRef: interviewData?.mockId,
       question: mockInterviewQuestion[activeQuestionIndex]?.question,
-      correctAns: mockInterviewQuestion[activeQQuestionIndex]?.answer,
+      correctAns: mockInterviewQuestion[activeQuestionIndex]?.answer,
       userAns: userAnswer,
       feedback: JsonFeedbackResp?.feedback,
       rating: JsonFeedbackResp?.rating,
