@@ -17,19 +17,20 @@ import { LoaderCircle } from "lucide-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 function AddNewInterview() {
   const [openDialog, setOpenDialog] = useState(false);
-  const [jobPosition, setJobPosition] = useState('');
-  const [jobDesc, setJobDesc] = useState('');
-  const [jobExperience, setJobExperience] = useState('');
+  const [jobPosition, setJobPosition] = useState("");
+  const [jobDesc, setJobDesc] = useState("");
+  const [jobExperience, setJobExperience] = useState("");
   const [loading, setLoading] = useState(false);
   const [JSONResp, setJSONResp] = useState([]);
   const { user } = useUser();
   const router = useRouter();
 
-  const onSubmit = async(e) => {
+  const onSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
@@ -37,38 +38,47 @@ function AddNewInterview() {
 
     const InputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDesc}, Years of Experience: ${jobExperience}, Depends on Job Position, Job Description and Years of Experience, give us 10 Interview Question along with their answers in JSON Format. Give questions and answers as fields in JSON`;
 
-    const result = await chatSession.sendMessage(InputPrompt);
-    const MockJSONResp = (result.response.text()).replace('```json','').replace('```','')
+    // you learnt this woohoo
+    let result = null;
+    try {
+      result = await chatSession.sendMessage(InputPrompt);
+    } catch (error) {
+      toast("Sorry our server is not working at a moment. Try Later please.");
+      setLoading(false);
+    }
+    const MockJSONResp = result.response
+      .text()
+      .replace("```json", "")
+      .replace("```", "");
     console.log(JSON.parse(MockJSONResp));
     setJSONResp(MockJSONResp);
 
-    
     if (MockJSONResp) {
-      
       try {
-        const resp = await db.insert(MockInterview)
-        .values({
-          mockId: uuidv4(),
-          jsonMockResp: MockJSONResp,
-          jobPosition: jobPosition,
-          jobDesc: jobDesc,
-          jobExperience: jobExperience,
-          createdBy: user?.primaryEmailAddress?.emailAddress,
-          createdAt: moment().format("DD-MM-yyyy"),
-        })
-        .returning({ mockId: MockInterview.mockId });
+        const resp = await db
+          .insert(MockInterview)
+          .values({
+            mockId: uuidv4(),
+            jsonMockResp: MockJSONResp,
+            jobPosition: jobPosition,
+            jobDesc: jobDesc,
+            jobExperience: jobExperience,
+            createdBy: user?.primaryEmailAddress?.emailAddress,
+            createdAt: moment().format("DD-MM-yyyy"),
+          })
+          .returning({ mockId: MockInterview.mockId });
 
-      
-      console.log("Inserted ID:", resp);
+        console.log("Inserted ID:", resp);
 
-      if (resp) {
-        setOpenDialog(false);
-        router.push("/dashboard/interview/" + resp[0]?.mockId);
+        if (resp) {
+          setOpenDialog(false);
+          router.push("/dashboard/interview/" + resp[0]?.mockId);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log("ERROR: ", error);
       }
-    setLoading(false);
-  } catch (error) {
-    console.log("ERROR: ", error);
-  }}
+    }
   };
 
   return (
@@ -95,7 +105,10 @@ function AddNewInterview() {
                         Description and years of experience.
                       </h2>
                       <div className="mt-7 my-3">
-                        <label htmlFor="job_title"> Job Role/Job Position</label>
+                        <label htmlFor="job_title">
+                          {" "}
+                          Job Role/Job Position
+                        </label>
                         <Input
                           id="position"
                           name="position"
@@ -117,7 +130,9 @@ function AddNewInterview() {
                         />
                       </div>
                       <div className="my-3">
-                        <label htmlFor="years_experience">Years of experience</label>
+                        <label htmlFor="years_experience">
+                          Years of experience
+                        </label>
                         <Input
                           id="experience"
                           name="experience"
@@ -142,11 +157,12 @@ function AddNewInterview() {
                       <button
                         disabled={loading}
                         type="submit"
-                        className="border rounded  p-2 bg-blue-600 text-white hover:bg-blue-400"
+                        className="border rounded p-2 bg-blue-600 text-white hover:bg-blue-400"
                       >
                         {loading ? (
                           <>
-                            <LoaderCircle className="animate-spin " /> Generating{" "}
+                            <LoaderCircle className="animate-spin " /> Please
+                            wait{" "}
                           </>
                         ) : (
                           "Start Interview"
