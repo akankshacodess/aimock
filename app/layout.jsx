@@ -1,6 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import Clerk from "./clerk"; // Import modified Clerk component
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,10 +21,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ClerkProvider>{children}</ClerkProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div>
+          <Clerk>{children}</Clerk>
+        </div>
       </body>
     </html>
   );
