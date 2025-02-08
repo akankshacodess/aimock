@@ -18,14 +18,9 @@ export default function Home() {
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
             <span>
-              <Link href={"/dashboard"}>
+              <Link className="flex justify-center" href={"/dashboard"}>
                 <Button>Let's Do This </Button>
               </Link>
-              <Button className="">
-                <a href="/resume.pdf" download={"resume"}>
-                  Download
-                </a>
-              </Button>
             </span>
           </div>
         </div>
