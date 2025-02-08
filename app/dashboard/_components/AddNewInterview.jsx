@@ -11,9 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { chatSession } from "@/utils/AiGemini";
 import { db } from "@/utils/db";
 
+// fontawesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 import { MockInterview } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -93,9 +97,17 @@ function AddNewInterview() {
         <Dialog open={openDialog}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-2xl">
-                Tell us more about the job you want to Interview
-              </DialogTitle>
+              <div className="flex justify-between">
+                <DialogTitle className="text-2xl">
+                  Tell us more about the job you want to Interview
+                </DialogTitle>
+                <div
+                  className="hover:border-black cursor-pointer"
+                  onClick={() => setOpenDialog(false)}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </div>
+              </div>
               <DialogDescription>
                 <div>
                   <form onSubmit={onSubmit}>
@@ -104,7 +116,7 @@ function AddNewInterview() {
                         Add Details about your job position/role, Job
                         Description and years of experience.
                       </h2>
-                      <div className="mt-7 my-3">
+                      <div className=" my-3">
                         <label htmlFor="job_title">
                           {" "}
                           Job Role/Job Position
@@ -112,6 +124,7 @@ function AddNewInterview() {
                         <Input
                           id="position"
                           name="position"
+                          className="mt-2"
                           placeholder="Ex. Full Stack Developer"
                           required
                           onChange={(e) => setJobPosition(e.target.value)}
@@ -124,6 +137,7 @@ function AddNewInterview() {
                         <Textarea
                           id="description"
                           name="description"
+                          className="mt-2"
                           placeholder="Ex. React JS, Tailwind CSS, Node JS, Mongo DB, etc."
                           required
                           onChange={(e) => setJobDesc(e.target.value)}
@@ -136,6 +150,7 @@ function AddNewInterview() {
                         <Input
                           id="experience"
                           name="experience"
+                          className="mt-2"
                           placeholder="Ex. 1"
                           type="number"
                           min="0"
