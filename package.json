@@ -38,6 +38,7 @@
     "pg": "^8.13.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-fontawesome": "^1.7.1",
     "react-hook-speech-to-text": "^0.8.0",
     "react-update": "^0.4.4",
     "react-webcam": "^7.2.0",
