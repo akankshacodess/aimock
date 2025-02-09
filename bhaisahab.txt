@@ -15,3 +15,17 @@ lucide.dev - icons
 react-hook-speech-to-text
 
 SpeechSynthesisUtterance = web Speech API interface -- speech req (lang, pitch, vol ) 
+
+
+
+Step 1: From your project repository, check out a new branch and test the changes.
+
+Copied! 
+git checkout -b ImTheParshuRam-main main
+git pull https://github.com/ImTheParshuRam/aimock.git main
+Step 2: Merge the changes and update on GitHub.
+
+Copied!
+git checkout main
+git merge --no-ff ImTheParshuRam-main
+git push origin main
