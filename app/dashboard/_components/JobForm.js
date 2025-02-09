@@ -12,6 +12,7 @@ import moment from "moment";
 import { chatSession } from "@/utils/AiGemini";
 import { db } from "@/utils/db";
 import { MockInterview } from "@/utils/schema";
+import { motion } from "framer-motion";
 
 export default function JobForm({ setOpenDialog }) {
   const [jobPosition, setJobPosition] = useState("");
@@ -122,7 +123,24 @@ export default function JobForm({ setOpenDialog }) {
         >
           {loading ? (
             <>
-              <LoaderCircle className="animate-spin" /> Please wait
+            <motion.div 
+  className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+>
+  <motion.div
+    animate={{ rotate: 360 }}
+    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+  > 
+    <LoaderCircle className="h-16 w-16 text-white" />
+  </motion.div>
+  <motion.div>
+    <p>
+      wait result will be there 
+    </p>
+  </motion.div>
+</motion.div> Please wait
             </>
           ) : (
             "Start Interview"
