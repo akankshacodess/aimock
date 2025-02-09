@@ -33,6 +33,7 @@ function Interview({ params }) {
     }
   };
 
+<<<<<<< HEAD
   return (
     <div className="">
       <h2 className="font-bold text-2xl">Let's Get Started</h2>
@@ -41,6 +42,17 @@ function Interview({ params }) {
         <div className="flex flex-col my-5 gap-5 ">
           <div className="flex flex-col my-5 gap-5 p-5 rounded-lg border">
             {interviewData ? (
+=======
+  return( 
+  <div className=" ">
+    <h2 className='font-bold text-2xl'>Let's Get Started</h2>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+    
+    <div className="flex flex-col my-5 gap-5 ">
+      <div className="flex flex-col my-5 gap-5 p-5 rounded-lg border">
+        {interviewData ? (
+>>>>>>> 99d3881 (done changes)
               <>
                 <h2 className="text-lg">
                   <strong>Job Role/Job Position:</strong>{" "}
