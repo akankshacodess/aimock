@@ -6,7 +6,7 @@ import React, { useState } from "react";
 
 
 
-function QuestionsSec({ mockInterviewQuestion = [], activeQuestionIndex, setActiveQuestionIndex}) {
+function QuestionsSec({ mockInterviewQuestion = [], activeQuestionIndex, setActiveQuestionIndex,recordingState}) {
   // Speaks the question
   // const setActiveQuestionIndex = useState(null);
   
@@ -40,9 +40,12 @@ function QuestionsSec({ mockInterviewQuestion = [], activeQuestionIndex, setActi
             mockInterviewQuestion.map((question, index) => (
               <button
                 key={index}
-                onClick={() => setActiveQuestionIndex(activeQuestionIndex === index? null : index)}
+                onClick={() =>{ 
+                  if (!recordingState) {
+                  setActiveQuestionIndex(activeQuestionIndex === index ? null : index);
+                }}}
                 className={`p-2 bg-secondary rounded-full text-xs md:text-sm text-center cursor-pointer ${
-                  activeQuestionIndex == index && "active-ques"
+                  activeQuestionIndex == index && "active-ques" 
                 }`}
               >
                 Question #{index + 1}
