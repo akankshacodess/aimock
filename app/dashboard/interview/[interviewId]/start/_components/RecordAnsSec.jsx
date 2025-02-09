@@ -13,11 +13,11 @@ import { db } from "@/utils/db";
 import moment from "moment";
 import { toast } from "sonner";
 
-
 function RecordAnsSec({
   mockInterviewQuestion,
   activeQuestionIndex,
   interviewData,
+  setActiveQuestionIndex,
 }) {
   const [userAnswer, setUserAnswer] = useState(0);
   const { user } = useUser();
@@ -52,8 +52,10 @@ function RecordAnsSec({
   const StartStopRecording = async () => {
     if (isRecording) {
       stopSpeechToText();
+      setActiveQuestionIndex();
     } else {
       startSpeechToText();
+      setActiveQuestionIndex();
     }
   };
 

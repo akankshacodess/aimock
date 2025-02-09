@@ -21,10 +21,26 @@ function StartInterview({ params }) {
   }, []);
 
   const GetInterviewDetails = async () => {
-    const result = await db
-      .select()
-      .from(MockInterview)
-      .where(eq(MockInterview.mockId, interviewId));
+    try {
+      const result = await db
+        .select()
+        .from(MockInterview)
+        .where(eq(MockInterview.mockId, interviewId));
+
+      if (!result.length || !result[0].jsonMockResp) {
+        console.error("No Data Found or jsonMockresp is undefinded.");
+        return;
+      }
+      console.log("Raw jsonMockResp:", result[0].jsonMockResp);
+
+      const jsonMockResp = JSON.parse(result[0].jsonMockResp);
+      console.log("Parsed JSON:", jsonMockResp);
+
+      setMockInterviewQuestion(jsonMockResp);
+      setInterviewData(result[0]);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+    }
 
     // console.log(result);
     // setInterviewData(result[0]);
@@ -36,7 +52,7 @@ function StartInterview({ params }) {
     setInterviewData(result[0]);
   };
   return (
-    <div className="min-h-screen">
+    <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Questions */}
 
@@ -51,6 +67,7 @@ function StartInterview({ params }) {
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
           interviewData={interviewData}
+          setActiveQuestionIndex={setActiveQuestionIndex}
         />
       </div>
       <div className="flex justify-end gap-6">

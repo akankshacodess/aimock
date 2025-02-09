@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  
 } from "@/components/ui/dialog";
 import JobForm from "./JobForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,7 +27,7 @@ export default function AddNewInterview() {
         <Dialog open={openDialog}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-            <div className="flex justify-between">
+              <div className="flex justify-between">
                 <DialogTitle className="text-2xl">
                   Tell us more about the job you want to Interview
                 </DialogTitle>
@@ -39,9 +38,8 @@ export default function AddNewInterview() {
                   <FontAwesomeIcon icon={faXmark} />
                 </div>
               </div>
-             
+
               <JobForm setOpenDialog={setOpenDialog} />
-              
             </DialogHeader>
           </DialogContent>
         </Dialog>

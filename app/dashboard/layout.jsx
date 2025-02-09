@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 function DashboardLayout({ children }) {
   try {
     return (
-      <div>
+      <div className="min-h-screen">
         <Header />
         <div className="mx-5 md:mx-20 lg:mx-36">
           <Toaster />

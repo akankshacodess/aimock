@@ -49,15 +49,18 @@ export default function JobForm({ setOpenDialog }) {
     }
 
     try {
-      const resp = await db.insert(MockInterview).values({
-        mockId: uuidv4(),
-        jsonMockResp: MockJSONResp,
-        jobPosition,
-        jobDesc,
-        jobExperience,
-        createdBy: user?.primaryEmailAddress?.emailAddress,
-        createdAt: moment().format("DD-MM-yyyy"),
-      }).returning({ mockId: MockInterview.mockId });
+      const resp = await db
+        .insert(MockInterview)
+        .values({
+          mockId: uuidv4(),
+          jsonMockResp: MockJSONResp,
+          jobPosition,
+          jobDesc,
+          jobExperience,
+          createdBy: user?.primaryEmailAddress?.emailAddress,
+          createdAt: moment().format("DD-MM-yyyy"),
+        })
+        .returning({ mockId: MockInterview.mockId });
 
       if (resp) {
         setOpenDialog(false);
@@ -73,7 +76,9 @@ export default function JobForm({ setOpenDialog }) {
   return (
     <form onSubmit={onSubmit}>
       <div>
-        <div>Add details about your job position/role, description, and experience.</div>
+        <div>
+          Add details about your job position/role, description, and experience.
+        </div>
 
         <div className="mt-7 my-3">
           <label htmlFor="job_title">Job Role/Job Position</label>
@@ -113,7 +118,11 @@ export default function JobForm({ setOpenDialog }) {
       </div>
 
       <div className="flex gap-5 justify-end">
-        <button type="button" variant="ghost" onClick={() => setOpenDialog(false)}>
+        <button
+          type="button"
+          variant="ghost"
+          onClick={() => setOpenDialog(false)}
+        >
           Cancel
         </button>
         <button
@@ -123,24 +132,23 @@ export default function JobForm({ setOpenDialog }) {
         >
           {loading ? (
             <>
-            <motion.div 
-  className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  exit={{ opacity: 0 }}
->
-  <motion.div
-    animate={{ rotate: 360 }}
-    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-  > 
-    <LoaderCircle className="h-16 w-16 text-white" />
-  </motion.div>
-  <motion.div>
-    <p>
-      wait result will be there 
-    </p>
-  </motion.div>
-</motion.div> Please wait
+              <motion.div
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                >
+                  <LoaderCircle className="h-16 w-16 text-white" />
+                </motion.div>
+                <motion.div>
+                  <div className="">wait result will be there</div>
+                </motion.div>
+              </motion.div>{" "}
+              Please wait
             </>
           ) : (
             "Start Interview"
