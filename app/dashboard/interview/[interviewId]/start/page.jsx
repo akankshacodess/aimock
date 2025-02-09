@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 function StartInterview({ params }) {
-  // from param we get interview id
   const unwrappedParams = React.use(params);
   const { interviewId } = unwrappedParams;
   const [interviewData, setInterviewData] = useState();
   const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
-
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  const [recordingState, setRecordingState] = useState(false);
+
   useEffect(() => {
     GetInterviewDetails();
   }, []);
@@ -26,24 +26,21 @@ function StartInterview({ params }) {
       .from(MockInterview)
       .where(eq(MockInterview.mockId, interviewId));
 
-    // console.log(result);
-    // setInterviewData(result[0]);
-
     const jsonMockResp = JSON.parse(result[0].jsonMockResp);
-    console.log(jsonMockResp);
-
     setMockInterviewQuestion(jsonMockResp);
     setInterviewData(result[0]);
   };
+
   return (
-    <div>
+    <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Questions */}
-
         <QuestionsSec
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
-          setActiveQuestionIndex = {setActiveQuestionIndex}
+          setActiveQuestionIndex={setActiveQuestionIndex}
+          setRecordingState={setRecordingState}
+          recordingState = {recordingState}
         />
 
         {/* Answer Record */}
@@ -51,12 +48,15 @@ function StartInterview({ params }) {
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
           interviewData={interviewData}
+          setActiveQuestionIndex={setActiveQuestionIndex}
+          setRecordingState={setRecordingState}
         />
       </div>
       <div className="flex justify-end gap-6">
-        {activeQuestionIndex > 0 && (
+        {activeQuestionIndex > 0 && activeQuestionIndex != null && (
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}
+            disabled={recordingState}
           >
             Previous Question
           </Button>
@@ -64,6 +64,7 @@ function StartInterview({ params }) {
         {activeQuestionIndex != mockInterviewQuestion?.length - 1 && (
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}
+            disabled={recordingState}
           >
             Next Question
           </Button>
@@ -72,7 +73,7 @@ function StartInterview({ params }) {
           <Link
             href={"/dashboard/interview/" + interviewData?.mockId + "/feedback"}
           >
-            <Button>End Interview</Button>
+            <Button disabled={recordingState}>End Interview</Button>
           </Link>
         )}
       </div>
@@ -81,3 +82,4 @@ function StartInterview({ params }) {
 }
 
 export default StartInterview;
+
