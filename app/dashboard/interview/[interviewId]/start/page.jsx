@@ -12,7 +12,7 @@ function StartInterview({ params }) {
   const unwrappedParams = React.use(params);
   const { interviewId } = unwrappedParams;
   const [interviewData, setInterviewData] = useState();
-  const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
+  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [recordingState, setRecordingState] = useState(false);
 
@@ -20,16 +20,26 @@ function StartInterview({ params }) {
     GetInterviewDetails();
   }, []);
 
-  const GetInterviewDetails = async () => {
-    const result = await db
-      .select()
-      .from(MockInterview)
-      .where(eq(MockInterview.mockId, interviewId));
-
-    const jsonMockResp = JSON.parse(result[0].jsonMockResp);
-    setMockInterviewQuestion(jsonMockResp);
-    setInterviewData(result[0]);
-  };
+    // Fetch interview details by mock ID
+    const GetInterviewDetails = async () => {
+      try {
+        const result = await db
+          .select()
+          .from(MockInterview)
+          .where(eq(MockInterview.mockId, interviewId));
+  
+        if (!result || result.length === 0) {
+          throw new Error("No interview found. It may have been removed.");
+        }
+  
+        const jsonMockResp = JSON.parse(result[0].jsonMockResp);
+        setMockInterviewQuestion(jsonMockResp);
+        setInterviewData(result[0]);
+      } catch (error) {
+        console.error("Error fetching interview details:", error);
+        setError(error.message || "An error occurred while fetching interview details. Please try again later.");
+      }
+    };
 
   return (
     <div className="">
