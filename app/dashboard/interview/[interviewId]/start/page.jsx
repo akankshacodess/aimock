@@ -3,7 +3,7 @@ import { db } from "@/utils/db";
 import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
-import QuestionsSec from "./_components/questionsSec";
+import QuestionsSec from "./_components/QuestionsSec";
 import RecordAnsSec from "./_components/RecordAnsSec";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
