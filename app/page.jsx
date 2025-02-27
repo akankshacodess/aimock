@@ -92,12 +92,17 @@
 // }
 
 "use client";
+
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ChatBubble from "@/components/ui/ChatBubble";
 
+import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+
 export default function Hero() {
+  const [loading, setLoading] = useState(false);
   return (
     <div className="hero min-h-screen bg-[rgb(255,255,255)] text-black px-6 flex flex-col-reverse md:flex-row-reverse items-center justify-between">
       {/* Chat Section */}
@@ -115,21 +120,37 @@ export default function Hero() {
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
-        className="text-center md:text-left w-full md:w-6/12 space-y-6"
+        className="text-center md:text-left w-full md:w-6/12 pl-5"
       >
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
           Ace Your Next Interview with{" "}
-          <span className="text-blue-700">AI-Powered Mock Interviews</span> 🚀
+          <span className="text-blue-700">AI-Powered Mock Interviews</span>🚀
         </h1>
-        <p className="text-lg md:text-xl opacity-90">
+        <p className="text-lg md:text-xl opacity-90 pt-5">
           Get real-time AI feedback, improve your responses, and boost
           confidence before your dream job interview.
         </p>
         <div className="flex justify-start">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="my-7"
+          >
             <Link href="/dashboard">
-              <Button className="px-6 py-3 text-lg bg-blue-600 text-white hover:bg-blue-400 transition-all duration-300 rounded-full shadow-lg">
-                🎯 Start Practicing Now
+              <Button
+                className="px-6 py-4 text-lg bg-blue-600 text-white hover:bg-blue-400 transition-all duration-300 rounded-full shadow-lg"
+                onClick={() => {
+                  setLoading(true);
+                }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <LoaderCircle className="animate-spin" /> Processing...
+                  </>
+                ) : (
+                  "🎯 Start Practicing Now"
+                )}
               </Button>
             </Link>
           </motion.div>
