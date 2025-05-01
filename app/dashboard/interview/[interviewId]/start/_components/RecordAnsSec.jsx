@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import useSpeechToText from "react-hook-speech-to-text";
 import { Mic, LoaderCircle } from "lucide-react";
+import { Mic, LoaderCircle } from "lucide-react";
 import { chatSession } from "@/utils/AiGemini";
 import { useUser } from "@clerk/nextjs";
 import { UserAnswer } from "@/utils/schema";
@@ -17,10 +18,7 @@ function RecordAnsSec({
   activeQuestionIndex,
   interviewData,
   setActiveQuestionIndex,
-<<<<<<< HEAD
-=======
   setRecordingState,
->>>>>>> 99d3881 (done changes)
 }) {
   const [userAnswer, setUserAnswer] = useState("");
   const { user } = useUser();
@@ -39,7 +37,9 @@ function RecordAnsSec({
 
   useEffect(() => {
     if (results.length > 0) {
-      setUserAnswer((prev) => prev + " " + results.map((r) => r.transcript).join(" "));
+      setUserAnswer(
+        (prev) => prev + " " + results.map((r) => r.transcript).join(" ")
+      );
     }
   }, [results]);
 
@@ -54,9 +54,10 @@ function RecordAnsSec({
 >>>>>>> 99d3881 (done changes)
     } else {
       setUserAnswer("");
+      setUserAnswer("");
       startSpeechToText();
 <<<<<<< HEAD
-      setActiveQuestionIndex();
+      setRecordingState(true);
 =======
       setRecordingState(true);
 >>>>>>> 99d3881 (done changes)
@@ -82,7 +83,18 @@ function RecordAnsSec({
         userEmail: user?.primaryEmailAddress?.emailAddress,
         createdAt: moment().format("DD-MM-yyyy"),
       });
+      await db.insert(UserAnswer).values({
+        mockIdRef: interviewData?.mockId,
+        question: mockInterviewQuestion[activeQuestionIndex]?.question,
+        correctAns: mockInterviewQuestion[activeQuestionIndex]?.answer,
+        userAns: userAnswer,
+        feedback: JsonFeedbackResp?.feedback,
+        rating: JsonFeedbackResp?.rating,
+        userEmail: user?.primaryEmailAddress?.emailAddress,
+        createdAt: moment().format("DD-MM-yyyy"),
+      });
 
+      toast("User answer recorded successfully");
       toast("User answer recorded successfully");
       setUserAnswer("");
       setResults([]);
@@ -90,7 +102,12 @@ function RecordAnsSec({
     } catch (error) {
       toast("Failed to record answer. Please try again.");
       console.error("Error saving answer:", error);
+      setRecordingState(false); // Re-enable question navigation
+    } catch (error) {
+      toast("Failed to record answer. Please try again.");
+      console.error("Error saving answer:", error);
     }
+
 
     setLoading(false);
   };
@@ -114,6 +131,7 @@ function RecordAnsSec({
           </h2>
         ) : (
           "Record Answer"
+        )}
         )}
       </Button>
     </div>

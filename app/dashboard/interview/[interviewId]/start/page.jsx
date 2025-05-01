@@ -16,6 +16,8 @@ function StartInterview({ params }) {
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [recordingState, setRecordingState] = useState(false);
 
+  const [recordingState, setRecordingState] = useState(false);
+
   useEffect(() => {
     GetInterviewDetails();
   }, []);
@@ -47,6 +49,7 @@ function StartInterview({ params }) {
     setInterviewData(result[0]);
   };
 
+
   return (
     <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -76,8 +79,10 @@ function StartInterview({ params }) {
       </div>
       <div className="flex justify-end gap-6">
         {activeQuestionIndex > 0 && activeQuestionIndex != null && (
+        {activeQuestionIndex > 0 && activeQuestionIndex != null && (
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}
+            disabled={recordingState}
             disabled={recordingState}
           >
             Previous Question
@@ -87,6 +92,7 @@ function StartInterview({ params }) {
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}
             disabled={recordingState}
+            disabled={recordingState}
           >
             Next Question
           </Button>
@@ -95,6 +101,7 @@ function StartInterview({ params }) {
           <Link
             href={"/dashboard/interview/" + interviewData?.mockId + "/feedback"}
           >
+            <Button disabled={recordingState}>End Interview</Button>
             <Button disabled={recordingState}>End Interview</Button>
           </Link>
         )}
