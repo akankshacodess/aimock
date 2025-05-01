@@ -3,7 +3,7 @@ import { db } from "@/utils/db";
 import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
-import QuestionsSec from "./_components/questionsSec";
+import QuestionsSec from "./_components/QuestionsSec";
 import RecordAnsSec from "./_components/RecordAnsSec";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -12,16 +12,15 @@ function StartInterview({ params }) {
   const unwrappedParams = React.use(params);
   const { interviewId } = unwrappedParams;
   const [interviewData, setInterviewData] = useState();
-  const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
+  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
-  const [recordingState, setRecordingState] = useState(false);
-
   const [recordingState, setRecordingState] = useState(false);
 
   useEffect(() => {
     GetInterviewDetails();
   }, []);
 
+  // Fetch interview details by mock ID
   const GetInterviewDetails = async () => {
     try {
       const result = await db
@@ -29,26 +28,21 @@ function StartInterview({ params }) {
         .from(MockInterview)
         .where(eq(MockInterview.mockId, interviewId));
 
-      if (!result.length || !result[0].jsonMockResp) {
-        console.error("No Data Found or jsonMockresp is undefinded.");
-        return;
+      if (!result || result.length === 0) {
+        throw new Error("No interview found. It may have been removed.");
       }
-      console.log("Raw jsonMockResp:", result[0].jsonMockResp);
 
       const jsonMockResp = JSON.parse(result[0].jsonMockResp);
-      console.log("Parsed JSON:", jsonMockResp);
-
       setMockInterviewQuestion(jsonMockResp);
       setInterviewData(result[0]);
     } catch (error) {
-      console.error("Error parsing JSON:", error);
+      console.error("Error fetching interview details:", error);
+      setError(
+        error.message ||
+          "An error occurred while fetching interview details. Please try again later."
+      );
     }
-
-    const jsonMockResp = JSON.parse(result[0].jsonMockResp);
-    setMockInterviewQuestion(jsonMockResp);
-    setInterviewData(result[0]);
   };
-
 
   return (
     <div className="">
@@ -58,11 +52,8 @@ function StartInterview({ params }) {
           mockInterviewQuestion={mockInterviewQuestion}
           activeQuestionIndex={activeQuestionIndex}
           setActiveQuestionIndex={setActiveQuestionIndex}
-<<<<<<< HEAD
-=======
           setRecordingState={setRecordingState}
-          recordingState = {recordingState}
->>>>>>> 99d3881 (done changes)
+          recordingState={recordingState}
         />
 
         {/* Answer Record */}
@@ -71,18 +62,13 @@ function StartInterview({ params }) {
           activeQuestionIndex={activeQuestionIndex}
           interviewData={interviewData}
           setActiveQuestionIndex={setActiveQuestionIndex}
-<<<<<<< HEAD
-=======
           setRecordingState={setRecordingState}
->>>>>>> 99d3881 (done changes)
         />
       </div>
       <div className="flex justify-end gap-6">
         {activeQuestionIndex > 0 && activeQuestionIndex != null && (
-        {activeQuestionIndex > 0 && activeQuestionIndex != null && (
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}
-            disabled={recordingState}
             disabled={recordingState}
           >
             Previous Question
@@ -91,7 +77,6 @@ function StartInterview({ params }) {
         {activeQuestionIndex != mockInterviewQuestion?.length - 1 && (
           <Button
             onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}
-            disabled={recordingState}
             disabled={recordingState}
           >
             Next Question
@@ -102,7 +87,6 @@ function StartInterview({ params }) {
             href={"/dashboard/interview/" + interviewData?.mockId + "/feedback"}
           >
             <Button disabled={recordingState}>End Interview</Button>
-            <Button disabled={recordingState}>End Interview</Button>
           </Link>
         )}
       </div>
@@ -111,4 +95,3 @@ function StartInterview({ params }) {
 }
 
 export default StartInterview;
-
