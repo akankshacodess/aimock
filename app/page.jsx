@@ -136,7 +136,7 @@ export default function Hero() {
             whileTap={{ scale: 0.95 }}
             className="my-7"
           >
-            <Link href="/dashboard">
+            <Link href="\sign-in">
               <Button
                 className="px-6 py-4 text-lg bg-blue-600 text-white hover:bg-blue-400 transition-all duration-300 rounded-full shadow-lg"
                 onClick={() => {

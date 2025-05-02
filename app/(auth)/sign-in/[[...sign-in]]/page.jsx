@@ -69,7 +69,7 @@ export default function Page() {
               </p>
             </div>
 
-            <SignIn />
+            <SignIn afterSignInUrl="/dashboard" />
           </div>
         </main>
       </div>

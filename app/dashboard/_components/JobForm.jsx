@@ -32,6 +32,7 @@ export default function JobForm({ setOpenDialog }) {
     try {
       result = await chatSession.sendMessage(InputPrompt);
     } catch (error) {
+      console.error("there is some issues, Please try again later", error)
       toast("Server error. Please try again later.");
       setLoading(false);
       return;

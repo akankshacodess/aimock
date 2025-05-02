@@ -25,3 +25,13 @@ export default authMiddleware();
 export const config = {
   matcher: ["/((?!_next|static|favicon.ico).*)"],
 };
+
+// middleware.ts
+// import { authMiddleware } from "@clerk/nextjs";
+
+// export default authMiddleware();
+
+// // Optional: Add a matcher for protected routes
+// export const config = {
+//   matcher: ["/((?!_next|static|favicon.ico).*)"],
+// };

@@ -24,14 +24,6 @@ export default function AddNewInterview() {
         <h2 className="text-lg text-center">+ Add New</h2>
       </div>
 
-      {/* <button
-        onClick={() => {
-          toast("heyyy");
-        }}
-      >
-        Heyy
-      </button> */}
-
       {openDialog && (
         <Dialog open={openDialog}>
           <DialogContent className="max-w-2xl">
