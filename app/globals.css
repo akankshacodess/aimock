@@ -10,7 +10,24 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Fix for Chrome autofill grey background */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  textarea:-webkit-autofill, 
+  textarea:-webkit-autofill:hover, 
+  textarea:-webkit-autofill:focus, 
+  select:-webkit-autofill, 
+  select:-webkit-autofill:hover, 
+  select:-webkit-autofill:focus {
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-text-fill-color: #000 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
+
 
 @layer base {
   :root {
@@ -80,4 +97,28 @@ body {
 .active-ques {
   color: white;
   background-color: rgb(0, 0, 189);
+}
+
+@keyframes slide-border {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.toast-custom {
+  padding-bottom: 10%;
+}
+
+.toast-custom::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background-color: #00ff00;
+  animation: slide-border 1.5s ease-in-out forwards;
 }

@@ -15,3 +15,70 @@ lucide.dev - icons
 react-hook-speech-to-text
 
 SpeechSynthesisUtterance = web Speech API interface -- speech req (lang, pitch, vol ) 
+
+
+
+Step 1: From your project repository, check out a new branch and test the changes.
+
+Copied! 
+git checkout -b ImTheParshuRam-main main
+git pull https://github.com/ImTheParshuRam/aimock.git main
+Step 2: Merge the changes and update on GitHub.
+
+Copied!
+git checkout main
+git merge --no-ff ImTheParshuRam-main
+git push origin main
+
+
+
+
+
+when you fork a branch 
+
+When you fork a GitHub repository and then run `git fetch`, it only fetches updates from the remote you have set up — typically called `origin`, which points to **your fork**, not the **original repository** (often called `upstream`).
+
+To fetch the latest changes from the **original repository**, you need to add it as a remote:
+
+### ✅ Steps to Fix:
+
+1. **Check your current remotes:**
+
+   ```bash
+   git remote -v
+   ```
+
+   You’ll likely see:
+
+   ```
+   origin  https://github.com/your-username/repo-name.git (fetch)
+   ```
+
+2. **Add the original repository as `upstream`:**
+
+   ```bash
+   git remote add upstream https://github.com/original-owner/repo-name.git
+   ```
+
+3. **Fetch from upstream:**
+
+   ```bash
+   git fetch upstream
+   ```
+
+4. **Merge or rebase changes into your branch (usually `main` or `master`):**
+
+   ```bash
+   git checkout main
+   git merge upstream/main
+   ```
+
+   Or if you prefer rebasing:
+
+   ```bash
+   git rebase upstream/main
+   ```
+
+This will bring in the latest changes from the original repo into your local repository.
+
+Would you like to keep your fork synced automatically with upstream in the future?

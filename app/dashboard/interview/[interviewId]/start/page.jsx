@@ -4,6 +4,7 @@ import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import QuestionsSec from "./_components/QuestionsSec";
+
 import RecordAnsSec from "./_components/RecordAnsSec";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -20,26 +21,30 @@ function StartInterview({ params }) {
     GetInterviewDetails();
   }, []);
 
-    // Fetch interview details by mock ID
-    const GetInterviewDetails = async () => {
-      try {
-        const result = await db
-          .select()
-          .from(MockInterview)
-          .where(eq(MockInterview.mockId, interviewId));
-  
-        if (!result || result.length === 0) {
-          throw new Error("No interview found. It may have been removed.");
-        }
-  
-        const jsonMockResp = JSON.parse(result[0].jsonMockResp);
-        setMockInterviewQuestion(jsonMockResp);
-        setInterviewData(result[0]);
-      } catch (error) {
-        console.error("Error fetching interview details:", error);
-        setError(error.message || "An error occurred while fetching interview details. Please try again later.");
+  // Fetch interview details by mock ID
+  const GetInterviewDetails = async () => {
+    try {
+      const result = await db
+        .select()
+        .from(MockInterview)
+        .where(eq(MockInterview.mockId, interviewId));
+
+      if (!result || result.length === 0) {
+        throw new Error("No interview found. It may have been removed.");
       }
-    };
+
+      const jsonMockResp = JSON.parse(result[0].jsonMockResp);
+      setMockInterviewQuestion(jsonMockResp);
+      setInterviewData(result[0]);
+    } catch (error) {
+      console.error("Error fetching interview details:", error);
+      setError(
+        error.message ||
+          "An error occurred while fetching interview details. Please try again later."
+      );
+    }
+  };
+    
 
   return (
     <div className="">
@@ -50,7 +55,7 @@ function StartInterview({ params }) {
           activeQuestionIndex={activeQuestionIndex}
           setActiveQuestionIndex={setActiveQuestionIndex}
           setRecordingState={setRecordingState}
-          recordingState = {recordingState}
+          recordingState={recordingState}
         />
 
         {/* Answer Record */}
@@ -92,4 +97,3 @@ function StartInterview({ params }) {
 }
 
 export default StartInterview;
-

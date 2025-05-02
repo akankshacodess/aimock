@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import useSpeechToText from "react-hook-speech-to-text";
 import { Mic, LoaderCircle } from "lucide-react";
+
 import { chatSession } from "@/utils/AiGemini";
 import { useUser } from "@clerk/nextjs";
 import { UserAnswer } from "@/utils/schema";
@@ -95,7 +96,10 @@ function RecordAnsSec({
   
     try {
       const result = await chatSession.sendMessage(feedbackPrompt);
-      const mockJsonResp = result.response.text().replace("```json", "").replace("```", "");
+      const mockJsonResp = result.response
+        .text()
+        .replace("```json", "")
+        .replace("```", "");
       const JsonFeedbackResp = JSON.parse(mockJsonResp);
   
       await db.insert(UserAnswer).values({
@@ -116,6 +120,7 @@ function RecordAnsSec({
     } catch (error) {
       toast("Failed to record answer. Please try again.");
       console.error("Error saving answer:", error);
+      setRecordingState(false); // Re-enable question navigation
     }
   
     setLoading(false);
@@ -127,11 +132,25 @@ function RecordAnsSec({
   return (
     <div className="flex items-center justify-center flex-col">
       <div className="flex flex-col md:mt-20 sm:mt-5 justify-center items-center bg-black rounded-lg p-5">
-        <Image src={"/webcam.jpg"} width={400} height={400} alt="webcam" className="absolute" />
-        <Webcam mirrored={true} style={{ height: 300, width: "100%", zIndex: 10 }} />
+        <Image
+          src={"/webcam.jpg"}
+          width={400}
+          height={400}
+          alt="webcam"
+          className="absolute"
+        />
+        <Webcam
+          mirrored={true}
+          style={{ height: 300, width: "100%", zIndex: 10 }}
+        />
       </div>
 
-      <Button variant="outline" className="my-10" onClick={StartStopRecording} disabled={loading} >
+      <Button
+        variant="outline"
+        className="my-10"
+        onClick={StartStopRecording}
+        disabled={loading}
+      >
         {loading ? (
           <>
             <LoaderCircle className="animate-spin" /> Processing...

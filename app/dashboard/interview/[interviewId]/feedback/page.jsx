@@ -65,14 +65,27 @@ export default function Feedback({ params }) {
       ? (totalRating / feedbackList.length).toFixed(1)
       : "N/A";
 
+  let remark;
+  if (averageRating === "N/A" || averageRating <= "2.0") {
+    remark = <h2 className="text-3xl font-bold text-red-500">Keep trying</h2>;
+  } else if (averageRating <= "4.0" && averageRating > "2.0") {
+    remark = <h2 className="text-3xl font-bold text-orange-500">Good Going</h2>;
+  } else {
+    remark = (
+      <h2 className="text-3xl font-bold text-green-500">Congratulations</h2>
+    );
+  }
+
   return (
-    <div className="p-10 ">
-      <h2 className="text-3xl font-bold text-green-500 ">Congratulations</h2>
-      <h2 className="font-bold text-2xl">Here is your interview feedback</h2>
-      <h2>
-        Your overall interview rating: <strong>{averageRating}/5.0</strong>
+    <div className="p-10">
+      {remark}
+      <h2 className="font-bold text-2xl my-3">
+        Here is your interview feedback
       </h2>
-      <h2 className="text-sm text-gray-500">
+      <h2>
+        Your overall interview rating: <strong> {averageRating}/ 5.0 </strong>
+      </h2>
+      <h2 className="text-sm text-gray-500 my-2">
         find below queston and corrected answer{" "}
       </h2>
       {feedbackList &&
