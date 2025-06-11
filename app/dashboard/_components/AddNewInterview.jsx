@@ -10,7 +10,7 @@ import {
 import JobForm from "./JobForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-
+import { toast } from "sonner";
 
 export default function AddNewInterview() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -23,8 +23,6 @@ export default function AddNewInterview() {
       >
         <h2 className="text-lg text-center">+ Add New</h2>
       </div>
-
-      
 
       {openDialog && (
         <Dialog open={openDialog}>

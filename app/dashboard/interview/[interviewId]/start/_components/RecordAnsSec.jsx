@@ -28,51 +28,39 @@ export default function RecordAnsSec({
   const [loading, setLoading] = useState(false)
   const [webcamEnabled, setWebcamEnabled] = useState(true)
   const [recordingTime, setRecordingTime] = useState(0)
-  const [isProcessing, setIsProcessing] = useState(false)
+
 
   const { isRecording, results, startSpeechToText, stopSpeechToText, setResults } = useSpeechToText({
     continuous: true,
     useLegacyResults: false,
-  })
+  });
 
-  useEffect(() => {
-    let interval
-    if (isRecording) {
-      interval = setInterval(() => {
-        setRecordingTime((prev) => prev + 1)
-      }, 1000)
-    } else {
-      setRecordingTime(0)
-    }
-    return () => clearInterval(interval)
-  }, [isRecording])
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (results.length > 0) {
+      console.log("Speech results updated:", results);
+
+      // Combine all transcripts into one string
       const finalAnswer = results
         .map((r) => r.transcript)
         .join(" ")
-        .trim()
+        .trim();
+
       if (finalAnswer) {
         setUserAnswer(finalAnswer)
       }
     }
-  }, [results])
-
-  useEffect(() => {
-    if (isProcessing && userAnswer) {
-      updateUserAnsInDb(userAnswer)
-      setIsProcessing(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userAnswer, isProcessing])
+  }, [results]);
 
   const StartStopRecording = async () => {
     try {
       if (isRecording) {
-        stopSpeechToText()
-        setRecordingState(false)
-        setIsProcessing(true)
+        stopSpeechToText();
+        setRecordingState(true);
+        setIsProcessing(true); // Show loading state while processing
+
+        // Now we wait for `useEffect` to update `userAnswer`
       } else {
         setUserAnswer("")
         setResults([])
@@ -80,13 +68,22 @@ export default function RecordAnsSec({
         setRecordingState(true)
       }
     } catch (error) {
-      console.error("Error in recording:", error)
-      toast.error("Microphone access issue. Please check your permissions.")
+      console.error("Error in recording:", error);
+      toast("Error: Mic access issue or network problem.");
     }
-  }
+  };
+
+  // Run this function when `userAnswer` is updated
+  useEffect(() => {
+    if (isProcessing && userAnswer) {
+      console.log("Final user answer:", userAnswer);
+      updateUserAnsInDb(userAnswer);
+      setIsProcessing(false); // Reset processing state
+    }
+  }, [userAnswer]);
 
   const updateUserAnsInDb = async (finalAnswer) => {
-    setLoading(true)
+    setLoading(true);
 
     if (!finalAnswer) {
       toast.warning("No answer detected. Please try again.")
@@ -94,12 +91,17 @@ export default function RecordAnsSec({
       return
     }
 
-    const feedbackPrompt = `Question: ${mockInterviewQuestion[activeQuestionIndex]?.question}, User Answer: ${finalAnswer}, Provide rating and feedback in JSON format.`
+    console.log("Final captured answer:", finalAnswer);
+
+    const feedbackPrompt = `Question: ${mockInterviewQuestion[activeQuestionIndex]?.question}, User Answer: ${finalAnswer}, Provide rating and feedback in JSON format.`;
 
     try {
-      const result = await chatSession.sendMessage(feedbackPrompt)
-      const mockJsonResp = result.response.text().replace("```json", "").replace("```", "")
-      const JsonFeedbackResp = JSON.parse(mockJsonResp)
+      const result = await chatSession.sendMessage(feedbackPrompt);
+      const mockJsonResp = result.response
+        .text()
+        .replace("```json", "")
+        .replace("```", "");
+      const JsonFeedbackResp = JSON.parse(mockJsonResp);
 
       await db.insert(UserAnswer).values({
         mockIdRef: interviewData?.mockId,
@@ -114,28 +116,22 @@ export default function RecordAnsSec({
         rating: JsonFeedbackResp?.rating,
         userEmail: user?.primaryEmailAddress?.emailAddress,
         createdAt: moment().format("DD-MM-yyyy"),
-      })
+      });
 
-      toast.success("Answer recorded successfully!")
-      setUserAnswer("")
-      setResults([])
-      setRecordingState(false)
-      onQuestionComplete()
+      toast("User answer recorded successfully");
+      setUserAnswer(""); // Clear answer
+      setResults([]); // Clear results
+      setRecordingState(false); // Re-enable navigation
     } catch (error) {
-      toast.error("Failed to record answer. Please try again.")
-      console.error("Error saving answer:", error)
-      setRecordingState(false)
+      toast("Failed to record answer. Please try again.");
+      console.error("Error saving answer:", error);
+      setRecordingState(false); // Re-enable question navigation
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
-
+  if (error) return console.log(error);
   return (
     <div className="space-y-6">
       {/* Webcam Card */}

@@ -60,21 +60,13 @@ export default function StartInterview({ params }) {
       setMockInterviewQuestion(jsonMockResp)
       setInterviewData(result[0])
     } catch (error) {
-      console.error("Error fetching interview details:", error)
+      console.error("Error fetching interview details:", error);
+      setError(
+        error.message ||
+          "An error occurred while fetching interview details. Please try again later."
+      );
     }
-  }
-
-  const formatTime = (ms) => {
-    const seconds = Math.floor(ms / 1000)
-    const minutes = Math.floor(seconds / 60)
-    return `${minutes}:${(seconds % 60).toString().padStart(2, "0")}`
-  }
-
-  const progressPercentage = ((activeQuestionIndex + 1) / mockInterviewQuestion.length) * 100
-
-  const handleQuestionComplete = () => {
-    setCompletedQuestions((prev) => new Set([...prev, activeQuestionIndex]))
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
