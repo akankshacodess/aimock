@@ -1,36 +1,54 @@
 // final code
 
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "../../../../../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../../../components/ui/card"
-import Webcam from "react-webcam"
-import useSpeechToText from "react-hook-speech-to-text"
-import { Mic, Square, RotateCcw, Camera, CameraOff, Volume2, Loader2 } from "lucide-react"
-import { chatSession } from "../../../../../../utils/AiGemini"
-import { useUser } from "@clerk/nextjs"
-import { UserAnswer } from "../../../../../../utils/schema"
-import { db } from "../../../../../../utils/db"
-import moment from "moment"
-import { toast } from "sonner"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "../../../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../../../../components/ui/card";
+import Webcam from "react-webcam";
+import useSpeechToText from "react-hook-speech-to-text";
+import {
+  Mic,
+  Square,
+  RotateCcw,
+  Camera,
+  CameraOff,
+  Volume2,
+  Loader2,
+} from "lucide-react";
+import { chatSession } from "../../../../../../utils/AiGemini";
+import { useUser } from "@clerk/nextjs";
+import { UserAnswer } from "../../../../../../utils/schema";
+import { db } from "../../../../../../utils/db";
+import moment from "moment";
+import { toast } from "sonner";
 
 export default function RecordAnsSec({
   mockInterviewQuestion,
   activeQuestionIndex,
   interviewData,
   setRecordingState,
-  onQuestionComplete,
+  // onQuestionComplete,
 }) {
-  const [userAnswer, setUserAnswer] = useState("")
-  const { user } = useUser()
-  const [loading, setLoading] = useState(false)
-  const [webcamEnabled, setWebcamEnabled] = useState(true)
-  const [recordingTime, setRecordingTime] = useState(0)
+  const [userAnswer, setUserAnswer] = useState("");
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
+  const [webcamEnabled, setWebcamEnabled] = useState(true);
+  const [recordingTime, setRecordingTime] = useState(0);
 
-
-  const { isRecording, results, startSpeechToText, stopSpeechToText, setResults } = useSpeechToText({
+  const {
+    isRecording,
+    results,
+    startSpeechToText,
+    stopSpeechToText,
+    setResults,
+  } = useSpeechToText({
     continuous: true,
     useLegacyResults: false,
   });
@@ -48,7 +66,7 @@ export default function RecordAnsSec({
         .trim();
 
       if (finalAnswer) {
-        setUserAnswer(finalAnswer)
+        setUserAnswer(finalAnswer);
       }
     }
   }, [results]);
@@ -62,10 +80,10 @@ export default function RecordAnsSec({
 
         // Now we wait for `useEffect` to update `userAnswer`
       } else {
-        setUserAnswer("")
-        setResults([])
-        startSpeechToText()
-        setRecordingState(true)
+        setUserAnswer("");
+        setResults([]);
+        startSpeechToText();
+        setRecordingState(true);
       }
     } catch (error) {
       console.error("Error in recording:", error);
@@ -86,9 +104,9 @@ export default function RecordAnsSec({
     setLoading(true);
 
     if (!finalAnswer) {
-      toast.warning("No answer detected. Please try again.")
-      setLoading(false)
-      return
+      toast.warning("No answer detected. Please try again.");
+      setLoading(false);
+      return;
     }
 
     console.log("Final captured answer:", finalAnswer);
@@ -138,14 +156,20 @@ export default function RecordAnsSec({
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm overflow-hidden">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">Camera Preview</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">
+              Camera Preview
+            </CardTitle>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setWebcamEnabled(!webcamEnabled)}
               className="flex items-center gap-2"
             >
-              {webcamEnabled ? <Camera className="w-4 h-4" /> : <CameraOff className="w-4 h-4" />}
+              {webcamEnabled ? (
+                <Camera className="w-4 h-4" />
+              ) : (
+                <CameraOff className="w-4 h-4" />
+              )}
               {webcamEnabled ? "Disable" : "Enable"}
             </Button>
           </div>
@@ -158,13 +182,15 @@ export default function RecordAnsSec({
                   mirrored={true}
                   className="w-full h-64 object-cover rounded-lg"
                   onUserMediaError={() => {
-                    setWebcamEnabled(false)
-                    toast.error("Camera access denied")
+                    setWebcamEnabled(false);
+                    toast.error("Camera access denied");
                   }}
                 />
                 <div className="absolute top-4 left-4 flex items-center space-x-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-white text-sm font-medium bg-black/50 px-2 py-1 rounded">Live</span>
+                  <span className="text-white text-sm font-medium bg-black/50 px-2 py-1 rounded">
+                    Live
+                  </span>
                 </div>
                 {isRecording && (
                   <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -187,7 +213,9 @@ export default function RecordAnsSec({
       {/* Recording Controls */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">Record Your Answer</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            Record Your Answer
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Recording Status */}
@@ -208,8 +236,12 @@ export default function RecordAnsSec({
                     <div className="absolute inset-0 w-20 h-20 border-4 border-red-300 rounded-full animate-ping mx-auto"></div>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-red-600">Recording...</p>
-                    <p className="text-sm text-gray-600">{formatTime(recordingTime)}</p>
+                    <p className="text-lg font-semibold text-red-600">
+                      Recording...
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatTime(recordingTime)}
+                    </p>
                   </div>
                 </motion.div>
               ) : loading ? (
@@ -224,8 +256,12 @@ export default function RecordAnsSec({
                     <Loader2 className="w-8 h-8 text-white animate-spin" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-blue-600">Processing...</p>
-                    <p className="text-sm text-gray-600">Analyzing your response</p>
+                    <p className="text-lg font-semibold text-blue-600">
+                      Processing...
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Analyzing your response
+                    </p>
                   </div>
                 </motion.div>
               ) : (
@@ -240,8 +276,12 @@ export default function RecordAnsSec({
                     <Mic className="w-8 h-8 text-gray-400" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-gray-700">Ready to Record</p>
-                    <p className="text-sm text-gray-600">Click the button below to start</p>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Ready to Record
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Click the button below to start
+                    </p>
                   </div>
                 </motion.div>
               )}
@@ -258,7 +298,9 @@ export default function RecordAnsSec({
               <div className="flex items-start space-x-2">
                 <Volume2 className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-blue-800 mb-1">Your Response:</p>
+                  <p className="text-sm font-medium text-blue-800 mb-1">
+                    Your Response:
+                  </p>
                   <p className="text-sm text-blue-700">{userAnswer}</p>
                 </div>
               </div>
@@ -271,7 +313,9 @@ export default function RecordAnsSec({
               onClick={StartStopRecording}
               disabled={loading}
               className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                isRecording ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
+                isRecording
+                  ? "bg-red-500 hover:bg-red-600 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
               {loading ? (
@@ -296,8 +340,8 @@ export default function RecordAnsSec({
               <Button
                 variant="outline"
                 onClick={() => {
-                  setUserAnswer("")
-                  setResults([])
+                  setUserAnswer("");
+                  setResults([]);
                 }}
                 className="px-6 py-3 rounded-xl"
               >
@@ -317,5 +361,5 @@ export default function RecordAnsSec({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
