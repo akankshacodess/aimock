@@ -1,64 +1,74 @@
 // final code
 
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 
-import { useState, useEffect } from "react"
-import { Button } from "../../../../../components/ui/button"
-import { Card, CardContent } from "../../../../../components/ui/card"
-import { Progress } from "../../../../../components/ui/progress"
-import { Badge } from "../../../../../components/ui/badge"
-import { ChevronLeft, ChevronRight, Clock, Mic, CheckCircle, Lightbulb, Target, Brain } from "lucide-react"
-import Link from "next/link"
-import { db } from "../../../../../utils/db"
-import { MockInterview } from "../../../../../utils/schema"
-import { eq } from "drizzle-orm"
-import QuestionsSec from "./_components/QuestionsSec"
-import RecordAnsSec from "./_components/RecordAnsSec"
+import { useState, useEffect } from "react";
+import { Button } from "../../../../../components/ui/button";
+import { Card, CardContent } from "../../../../../components/ui/card";
+import { Progress } from "../../../../../components/ui/progress";
+import { Badge } from "../../../../../components/ui/badge";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Mic,
+  CheckCircle,
+  Lightbulb,
+  Target,
+  Brain,
+} from "lucide-react";
+import Link from "next/link";
+import { db } from "../../../../../utils/db";
+import { MockInterview } from "../../../../../utils/schema";
+import { eq } from "drizzle-orm";
+import QuestionsSec from "./_components/QuestionsSec";
+import RecordAnsSec from "./_components/RecordAnsSec";
 
-
-
-//final change 
+//final change
 export default function StartInterview({ params }) {
-  const unwrappedParams = React.use(params)
-  const { interviewId } = unwrappedParams
-  const [interviewData, setInterviewData] = useState()
-  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([])
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
-  const [recordingState, setRecordingState] = useState(false)
-  const [completedQuestions, setCompletedQuestions] = useState(new Set())
-  const [timeElapsed, setTimeElapsed] = useState(0)
-  const [questionStartTime, setQuestionStartTime] = useState(Date.now())
+  const unwrappedParams = React.use(params);
+  const { interviewId } = unwrappedParams;
+  const [interviewData, setInterviewData] = useState();
+  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  const [recordingState, setRecordingState] = useState(false);
+  const [completedQuestions, setCompletedQuestions] = useState(new Set());
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
 
   useEffect(() => {
-    GetInterviewDetails()
+    GetInterviewDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeElapsed(Date.now() - questionStartTime)
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [questionStartTime, activeQuestionIndex])
+      setTimeElapsed(Date.now() - questionStartTime);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [questionStartTime, activeQuestionIndex]);
 
   useEffect(() => {
-    setQuestionStartTime(Date.now())
-    setTimeElapsed(0)
-  }, [activeQuestionIndex])
+    setQuestionStartTime(Date.now());
+    setTimeElapsed(0);
+  }, [activeQuestionIndex]);
 
   const GetInterviewDetails = async () => {
     try {
-      const result = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
+      const result = await db
+        .select()
+        .from(MockInterview)
+        .where(eq(MockInterview.mockId, interviewId));
 
       if (!result || result.length === 0) {
-        throw new Error("No interview found. It may have been removed.")
+        throw new Error("No interview found. It may have been removed.");
       }
 
-      const jsonMockResp = JSON.parse(result[0].jsonMockResp)
-      setMockInterviewQuestion(jsonMockResp)
-      setInterviewData(result[0])
+      const jsonMockResp = JSON.parse(result[0].jsonMockResp);
+      setMockInterviewQuestion(jsonMockResp);
+      setInterviewData(result[0]);
     } catch (error) {
       console.error("Error fetching interview details:", error);
       setError(
@@ -76,14 +86,22 @@ export default function StartInterview({ params }) {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <Link href={`/dashboard/interview/${interviewId}`}>
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
                   <ChevronLeft className="w-4 h-4" />
                   Back
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Mock Interview</h1>
-                <p className="text-sm text-gray-600">{interviewData?.jobPosition}</p>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Mock Interview
+                </h1>
+                <p className="text-sm text-gray-600">
+                  {interviewData?.jobPosition}
+                </p>
               </div>
             </div>
 
@@ -92,8 +110,12 @@ export default function StartInterview({ params }) {
                 <Clock className="w-4 h-4" />
                 <span>{formatTime(timeElapsed)}</span>
               </div>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                Question {activeQuestionIndex + 1} of {mockInterviewQuestion.length}
+              <Badge
+                variant="outline"
+                className="bg-blue-50 text-blue-700 border-blue-200"
+              >
+                Question {activeQuestionIndex + 1} of{" "}
+                {mockInterviewQuestion.length}
               </Badge>
             </div>
           </div>
@@ -126,7 +148,11 @@ export default function StartInterview({ params }) {
                 <div className="flex items-center justify-between">
                   <Button
                     variant="outline"
-                    onClick={() => setActiveQuestionIndex(Math.max(0, activeQuestionIndex - 1))}
+                    onClick={() =>
+                      setActiveQuestionIndex(
+                        Math.max(0, activeQuestionIndex - 1)
+                      )
+                    }
                     disabled={activeQuestionIndex === 0 || recordingState}
                     className="flex items-center gap-2"
                   >
@@ -138,17 +164,23 @@ export default function StartInterview({ params }) {
                     {mockInterviewQuestion.map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => !recordingState && setActiveQuestionIndex(index)}
+                        onClick={() =>
+                          !recordingState && setActiveQuestionIndex(index)
+                        }
                         disabled={recordingState}
                         className={`w-8 h-8 rounded-full text-xs font-medium transition-all duration-200 ${
                           index === activeQuestionIndex
                             ? "bg-blue-600 text-white shadow-lg"
                             : completedQuestions.has(index)
-                              ? "bg-green-100 text-green-700 border border-green-200"
-                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            ? "bg-green-100 text-green-700 border border-green-200"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                         }`}
                       >
-                        {completedQuestions.has(index) ? <CheckCircle className="w-4 h-4 mx-auto" /> : index + 1}
+                        {completedQuestions.has(index) ? (
+                          <CheckCircle className="w-4 h-4 mx-auto" />
+                        ) : (
+                          index + 1
+                        )}
                       </button>
                     ))}
                   </div>
@@ -156,7 +188,12 @@ export default function StartInterview({ params }) {
                   {activeQuestionIndex < mockInterviewQuestion.length - 1 ? (
                     <Button
                       onClick={() =>
-                        setActiveQuestionIndex(Math.min(mockInterviewQuestion.length - 1, activeQuestionIndex + 1))
+                        setActiveQuestionIndex(
+                          Math.min(
+                            mockInterviewQuestion.length - 1,
+                            activeQuestionIndex + 1
+                          )
+                        )
                       }
                       disabled={recordingState}
                       className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
@@ -165,7 +202,9 @@ export default function StartInterview({ params }) {
                       <ChevronRight className="w-4 h-4" />
                     </Button>
                   ) : (
-                    <Link href={`/dashboard/interview/${interviewData?.mockId}/feedback`}>
+                    <Link
+                      href={`/dashboard/interview/${interviewData?.mockId}/feedback`}
+                    >
                       <Button
                         disabled={recordingState}
                         className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
@@ -218,5 +257,5 @@ export default function StartInterview({ params }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
