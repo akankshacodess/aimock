@@ -38,6 +38,8 @@ export default function Feedback() {
   const [feedbackList, setFeedbackList] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState("overview");
+  const tabContext = { active: activeTab, setActive: setActiveTab };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,14 +50,24 @@ export default function Feedback() {
       }
 
       try {
-        console.log("Fetching feedback for interview:", interviewId)
+        // console.log("Fetching feedback for interview:", interviewId)
         const result = await db
           .select()
           .from(UserAnswer)
           .where(eq(UserAnswer.mockIdRef, interviewId))
           .orderBy(UserAnswer.id)
 
-        console.log("Fetched feedback data:", result)
+        // console.log("Fetched feedback data:", result)
+        // if (result && result.length > 0) {
+        //   result.forEach((item, idx) => {
+        //     console.log(`Feedback[${idx}]:`, {
+        //       userAns: item.userAns,
+        //       correctAns: item.correctAns,
+        //       feedback: item.feedback,
+        //       full: item
+        //     });
+        //   });
+        // }
         setFeedbackList(result)
 
         if (result.length === 0) {
@@ -271,7 +283,7 @@ export default function Feedback() {
           <div className="space-y-6">
             {feedbackList.map((item, index) => (
               <motion.div
-                key={item.id}
+                key={item.id || index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -312,115 +324,65 @@ export default function Feedback() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <div className="border-t border-gray-100">
-                      <Tabs defaultValue="overview" className="w-full">
-                        <TabsList className="grid w-full grid-cols-4 bg-gray-50 m-4 rounded-lg">
+                      <Tabs defaultValue="overview" className="w-full" key={`tabs-${index}`}>
+                        <TabsList>
                           <TabsTrigger value="overview">Overview</TabsTrigger>
                           <TabsTrigger value="your-answer">Your Answer</TabsTrigger>
                           <TabsTrigger value="ideal-answer">Ideal Answer</TabsTrigger>
                           <TabsTrigger value="feedback">Feedback</TabsTrigger>
                         </TabsList>
-
-                        <div className="p-6 pt-0">
-                          <TabsContent value="overview" className="space-y-4">
-                            <div className="bg-gray-50 rounded-lg p-4">
-                              <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
-                                <MessageSquare className="w-4 h-4 mr-2" />
-                                Question
-                              </h4>
-                              <p className="text-gray-700">{item.question}</p>
+                        <TabsContent value="overview">
+                          <div className="bg-blue-50/60 border border-blue-100 rounded-lg p-5 mb-2">
+                            <div className="mb-2 flex items-center gap-2">
+                              <Target className="w-5 h-5 text-blue-600" />
+                              <span className="font-semibold text-blue-900">Question:</span>
+                              <span className="text-gray-800">{item.question}</span>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="bg-blue-50 rounded-lg p-4">
-                                <h4 className="font-semibold text-blue-800 mb-2">Performance Score</h4>
-                                <div className="flex items-center space-x-2">
-                                  <div className="flex-1">
-                                    <Progress value={(Number(item.rating) / 5) * 100} className="h-3" />
-                                  </div>
-                                  <span className="text-blue-800 font-bold">{item.rating}/5</span>
-                                </div>
-                              </div>
-
-                              <div className="bg-purple-50 rounded-lg p-4">
-                                <h4 className="font-semibold text-purple-800 mb-2">Key Strengths</h4>
-                                <div className="flex items-center space-x-2">
-                                  {Number(item.rating) >= 4 ? (
-                                    <ThumbsUp className="w-4 h-4 text-green-600" />
-                                  ) : (
-                                    <ThumbsDown className="w-4 h-4 text-red-600" />
-                                  )}
-                                  <span className="text-purple-800 text-sm">
-                                    {Number(item.rating) >= 4 ? "Well structured" : "Needs improvement"}
-                                  </span>
-                                </div>
-                              </div>
+                            <div className="flex items-center gap-2">
+                              <Star className="w-5 h-5 text-yellow-400" />
+                              <span className="font-semibold text-blue-900">Score:</span>
+                              <span className="text-gray-800">{item.rating}/5</span>
                             </div>
-                          </TabsContent>
-
-                          <TabsContent value="your-answer">
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                              <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
-                                <MessageSquare className="w-4 h-4 mr-2" />
-                                Your Response
-                              </h4>
-                              <p className="text-blue-700 leading-relaxed">{item.userAns || "No answer recorded"}</p>
+                          </div>
+                        </TabsContent>
+                        <TabsContent value="your-answer">
+                          <div className="bg-white border border-blue-100 rounded-lg p-5 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
+                              <MessageSquare className="w-5 h-5 text-blue-600" />
+                              <span className="font-semibold text-blue-900">Your Answer:</span>
                             </div>
-                          </TabsContent>
-
-                          <TabsContent value="ideal-answer">
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                              <h4 className="font-semibold text-green-800 mb-3 flex items-center">
-                                <Target className="w-4 h-4 mr-2" />
-                                Ideal Answer
-                              </h4>
-                              <p className="text-green-700 leading-relaxed">
-                                {item.correctAns || "No ideal answer available"}
-                              </p>
+                            <p className="text-gray-800">{item.userAns || "No answer recorded"}</p>
+                          </div>
+                        </TabsContent>
+                        <TabsContent value="ideal-answer">
+                          <div className="bg-green-50 border border-green-100 rounded-lg p-5 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Lightbulb className="w-5 h-5 text-green-600" />
+                              <span className="font-semibold text-green-900">Ideal Answer:</span>
                             </div>
-                          </TabsContent>
-
-                          <TabsContent value="feedback">
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-                              <h4 className="font-semibold text-amber-800 mb-3 flex items-center">
-                                <Lightbulb className="w-4 h-4 mr-2" />
-                                AI Feedback & Suggestions
-                              </h4>
-                              <p className="text-amber-700 leading-relaxed mb-4">
-                                {item.feedback || "No feedback available"}
-                              </p>
-
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <h5 className="font-medium text-amber-800">Strengths:</h5>
-                                  <div className="flex items-start space-x-2">
-                                    {Number(item.rating) >= 3 ? (
-                                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                    ) : (
-                                      <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-                                    )}
-                                    <p className="text-amber-700 text-sm">
-                                      {Number(item.rating) >= 3
-                                        ? "Clear communication and relevant examples"
-                                        : "Room for improvement in clarity and examples"}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                  <h5 className="font-medium text-amber-800">Areas to Improve:</h5>
-                                  <div className="flex items-start space-x-2">
-                                    <Brain className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                                    <p className="text-amber-700 text-sm">
-                                      {Number(item.rating) < 4
-                                        ? "Add more specific technical details and quantifiable results"
-                                        : "Continue practicing to maintain this excellent level"}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
+                            <p className="text-gray-800">{item.correctAns || "No ideal answer available"}</p>
+                          </div>
+                        </TabsContent>
+                        <TabsContent value="feedback">
+                          <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-5 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
+                              <ThumbsUp className="w-5 h-5 text-yellow-600" />
+                              <span className="font-semibold text-yellow-900">AI Feedback:</span>
                             </div>
-                          </TabsContent>
-                        </div>
+                            <p className="text-gray-800">
+                              {item.feedback
+                                ? (() => {
+                                    try {
+                                      const parsed = JSON.parse(item.feedback);
+                                      return parsed.overall || item.feedback;
+                                    } catch {
+                                      return item.feedback;
+                                    }
+                                  })()
+                                : "No feedback available"}
+                            </p>
+                          </div>
+                        </TabsContent>
                       </Tabs>
                     </div>
                   </CollapsibleContent>

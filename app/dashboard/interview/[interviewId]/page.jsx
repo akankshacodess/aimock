@@ -20,7 +20,7 @@ function Interview({ params }) {
       setError("Missing interview ID. Please check the URL.");
       return;
     }
-    console.log(interviewId);
+    // console.log(interviewId);
     GetInterviewDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interviewId]);
@@ -33,7 +33,7 @@ function Interview({ params }) {
         .from(MockInterview)
         .where(eq(MockInterview.mockId, interviewId));
 
-      console.log("Fetched interview data:", result);
+      // console.log("Fetched interview data:", result);
       if (result.length > 0) {
         setInterviewData(result[0]);
       } else {
