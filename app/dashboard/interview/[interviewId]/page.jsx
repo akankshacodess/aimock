@@ -1,7 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
+import { Button } from "../../../../components/ui/button";
+import { db } from "../../../../utils/db";
+import { MockInterview } from "../../../../utils/schema";
 import { eq } from "drizzle-orm";
 import { Lightbulb, WebcamIcon } from "lucide-react";
 import Link from "next/link";
@@ -22,6 +22,7 @@ function Interview({ params }) {
     }
     console.log(interviewId);
     GetInterviewDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interviewId]);
 
   // Fetch interview details by mock ID
@@ -46,7 +47,7 @@ function Interview({ params }) {
 
   return (
     <div className="p-10 ">
-      <h2 className="font-bold text-2xl">Let's Get Started</h2>
+      <h2 className="font-bold text-2xl">Let&apos;s Get Started</h2>
 
       {error ? (
         <div className="p-5 bg-red-100 border border-red-400 text-red-700 rounded">

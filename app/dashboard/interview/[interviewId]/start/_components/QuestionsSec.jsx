@@ -1,135 +1,145 @@
-"use client";
+"use client"
 
-import { mockInterview } from "@/drizzle/schema";
-import { Lightbulb, Volume2 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../../../components/ui/card"
+import { Button } from "../../../../../../components/ui/button"
+import { Badge } from "../../../../../../components/ui/badge"
+import { Volume2, VolumeX, Lightbulb, CheckCircle, Clock } from "lucide-react"
 
+export default function QuestionsSec({
+  mockInterviewQuestion = [],
+  activeQuestionIndex,
+  completedQuestions,
+}) {
+  const [isSpeaking, setIsSpeaking] = useState(false)
 
-
-function QuestionsSec({ mockInterviewQuestion = [], activeQuestionIndex, setActiveQuestionIndex,recordingState}) {
-  // Speaks the question
-  // const setActiveQuestionIndex = useState(null);
-  
   const textToSpeech = (text) => {
-    if ("speechSynthesis" in window) {
-      const speech = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(speech);
-    } else {
-      alert("Sorry, Your browser does not support text to speech");
     if ("speechSynthesis" in window) {
       try {
         if (text) {
-          const speech = new SpeechSynthesisUtterance(text);
-          window.speechSynthesis.speak(speech);
-        } else {
-          console.error("Text-to-speech: No text provided.");
+          window.speechSynthesis.cancel()
+          const speech = new SpeechSynthesisUtterance(text)
+          speech.onstart = () => setIsSpeaking(true)
+          speech.onend = () => setIsSpeaking(false)
+          window.speechSynthesis.speak(speech)
         }
       } catch (error) {
-        console.error("Text-to-speech failed:", error);
+        console.error("Text-to-speech failed:", error)
       }
     } else {
-      alert("Sorry, your browser does not support text-to-speech.");
+      alert("Sorry, your browser does not support text-to-speech.")
     }
-  };
-}
-  return(
-    mockInterviewQuestion && (
-      <div className="p-5 border rounded-lg my-10 position-fixed">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {mockInterviewQuestion &&
-            mockInterviewQuestion.map((question, index) => (
-              <button
-                key={index}
-                onClick={() =>{ 
-                  if (!recordingState) {
-                  setActiveQuestionIndex(activeQuestionIndex === index ? null : index);
-                }}}
-                className={`p-2 bg-secondary rounded-full text-xs md:text-sm text-center cursor-pointer ${
-                  activeQuestionIndex == index && "active-ques" 
-                }`}
-              >
-                Question #{index + 1}
-              </button>
-            ))}
-        </div>
-        <h2 className="my-5 text-sm md:text-md ">
-          {mockInterviewQuestion[activeQuestionIndex]?.question}
-        </h2>
-        <Volume2
-          className="cursor-pointer"
-          onClick={() =>
-            textToSpeech(mockInterviewQuestion[activeQuestionIndex]?.question)
-          }
-        />
-        
-        <div className="border rounded-lg p-5 bg-blue-100 mt-10">
-          <h2 className="flex gap-2 items-center text-blue-700">
-            <Lightbulb />
-            <strong>Note: </strong>
-          </h2>
-          <h2 className="text-sm text-blue-700 my-2">
-            {process.env.NEXT_PUBLIC_QUESTION_NOTE}
-          </h2>
-        </div>
-      </div>
-    )
+  }
 
+  const stopSpeech = () => {
+    window.speechSynthesis.cancel()
+    setIsSpeaking(false)
+  }
+
+  const currentQuestion = mockInterviewQuestion[activeQuestionIndex]
+
+  return (
+    <div className="space-y-6">
+      {/* Question Display */}
+      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold text-gray-900">Question {activeQuestionIndex + 1}</CardTitle>
+            <div className="flex items-center space-x-2">
+              {completedQuestions.has(activeQuestionIndex) && (
+                <Badge className="bg-green-100 text-green-700 border-green-200">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Completed
+                </Badge>
+              )}
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Clock className="w-3 h-3 mr-1" />
+                Active
+              </Badge>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeQuestionIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-4"
+            >
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                <p className="text-lg leading-relaxed text-gray-800 font-medium">{currentQuestion?.question}</p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => (isSpeaking ? stopSpeech() : textToSpeech(currentQuestion?.question))}
+                    className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-200"
+                  >
+                    {isSpeaking ? (
+                      <>
+                        <VolumeX className="w-4 h-4" />
+                        Stop
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-4 h-4" />
+                        Listen
+                      </>
+                    )}
+                  </Button>
+
+                  {isSpeaking && (
+                    <div className="flex items-center space-x-1">
+                      <div className="w-1 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+                      <div className="w-1 h-6 bg-blue-500 rounded-full animate-pulse animation-delay-100"></div>
+                      <div className="w-1 h-4 bg-blue-500 rounded-full animate-pulse animation-delay-200"></div>
+                      <span className="text-sm text-blue-600 ml-2">Speaking...</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  {activeQuestionIndex + 1} of {mockInterviewQuestion.length}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
+      {/* Tips Card */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+        <CardContent className="p-6">
+          <div className="flex items-start space-x-3">
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <Lightbulb className="w-5 h-5 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-amber-800 mb-2">Pro Tip</h3>
+              <p className="text-sm text-amber-700 leading-relaxed">
+                {process.env.NEXT_PUBLIC_QUESTION_NOTE ||
+                  "Take your time to think through your answer. Click &apos;Record Answer&apos; when you&apos;re ready to respond. You can review your answer before moving to the next question."}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <style jsx>{`
+        .animation-delay-100 {
+          animation-delay: 0.1s;
+        }
+        .animation-delay-200 {
+          animation-delay: 0.2s;
+        }
+      `}</style>
+    </div>
   )
-};
-
-
-//   // Debugging: Log props
-//   console.log("Questions:", mockInterviewQuestion, "Active Index:", activeQuestionIndex);
-
-//   return (
-//     <div className="p-5 border rounded-lg my-10">
-//       {/* Question Navigation */}
-//       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-//         {mockInterviewQuestion.length > 0 ? (
-//           mockInterviewQuestion.map((question, index) => (
-//             <h2
-//               key={question.id || index} // Use unique key, prefer `id`
-//               className={`p-2 bg-secondary rounded-full text-xs md:text-sm text-center cursor-pointer 
-//               ${activeQuestionIndex === index && "bg-black text-violet-50"}
-//               `}
-//             >
-//               Question #{index + 1}
-//             </h2>
-//           ))
-//         ) : (
-//           <p>No questions available.</p> // Fallback for empty data
-//         )}
-//       </div>
-
-//       {/* Display Active Question */}
-//       {mockInterviewQuestion[activeQuestionIndex] ? (
-//         <>
-//           <h2 className="my-5 text-md md:text-lg">
-//             {mockInterviewQuestion[activeQuestionIndex]?.question || "No question available."}
-//           </h2>
-//           <Volume2
-//             className="cursor-pointer"
-//             onClick={() =>
-//               textToSpeech(mockInterviewQuestion[activeQuestionIndex]?.question)
-//             }
-//           />
-//         </>
-//       ) : (
-//         <p className="text-red-500 my-5">Please select a question to view details.</p>
-//       )}
-
-//       {/* Note Section */}
-//       <div className="border rounded-lg p-5 bg-blue-100 mt-10">
-//         <h2 className="flex gap-2 items-center text-blue-700">
-//           <Lightbulb />
-//           <strong>Note: </strong>
-//         </h2>
-//         <h2 className="text-sm text-blue-700 my-2">
-//           {process.env.NEXT_PUBLIC_QUESTION_NOTE || "No additional notes available."}
-//         </h2>
-//       </div>
-//     </div>
-//   );
-// }
-
-export default QuestionsSec;
+}
