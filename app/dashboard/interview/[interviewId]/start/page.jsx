@@ -1,20 +1,47 @@
-"use client";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
-import { eq } from "drizzle-orm";
-import React, { useEffect, useState } from "react";
-import QuestionsSec from "./_components/QuestionsSec";
-import RecordAnsSec from "./_components/RecordAnsSec";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// final code
 
-function StartInterview({ params }) {
-  const unwrappedParams = React.use(params);
-  const { interviewId } = unwrappedParams;
-  const [interviewData, setInterviewData] = useState();
-  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
-  const [recordingState, setRecordingState] = useState(false);
+"use client"
+
+import React from "react"
+
+import { useState, useEffect } from "react"
+import { Button } from "../../../../../components/ui/button"
+import { Card, CardContent } from "../../../../../components/ui/card"
+import { Progress } from "../../../../../components/ui/progress"
+import { Badge } from "../../../../../components/ui/badge"
+import { ChevronLeft, ChevronRight, Clock, Mic, CheckCircle, Lightbulb, Target, Brain } from "lucide-react"
+import Link from "next/link"
+import { db } from "../../../../../utils/db"
+import { MockInterview } from "../../../../../utils/schema"
+import { eq } from "drizzle-orm"
+import QuestionsSec from "./_components/QuestionsSec"
+import RecordAnsSec from "./_components/RecordAnsSec"
+
+
+
+//final change 
+export default function StartInterview({ params }) {
+  const unwrappedParams = React.use(params)
+  const { interviewId } = unwrappedParams
+  const [interviewData, setInterviewData] = useState()
+  const [mockInterviewQuestion, setMockInterviewQuestion] = useState([])
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
+  const [recordingState, setRecordingState] = useState(false)
+  const [completedQuestions, setCompletedQuestions] = useState(new Set())
+  const [timeElapsed, setTimeElapsed] = useState(0)
+  const [questionStartTime, setQuestionStartTime] = useState(Date.now())
+
+  useEffect(() => {
+    GetInterviewDetails()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeElapsed(Date.now() - questionStartTime)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [questionStartTime, activeQuestionIndex])
 
   useEffect(() => {
     setQuestionStartTime(Date.now())
