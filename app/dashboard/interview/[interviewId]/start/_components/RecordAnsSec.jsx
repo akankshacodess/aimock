@@ -241,7 +241,7 @@ export default function RecordAnsSec({
                       Recording...
                     </p>
                     <p className="text-sm text-gray-600">
-                      {formatTime(recordingTime)}
+                      {formatTime(0)}
                     </p>
                   </div>
                 </motion.div>
