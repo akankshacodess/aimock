@@ -40,7 +40,7 @@ export default function RecordAnsSec({
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [webcamEnabled, setWebcamEnabled] = useState(true);
-  const [recordingTime, setRecordingTime] = useState(0);
+  // const [recordingTime, setRecordingTime] = useState(0);
 
   const {
     isRecording,
@@ -192,9 +192,10 @@ export default function RecordAnsSec({
                     Live
                   </span>
                 </div>
+                
                 {isRecording && (
                   <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    REC {formatTime(recordingTime)}
+                    REC {formatTime(0)}
                   </div>
                 )}
               </div>
