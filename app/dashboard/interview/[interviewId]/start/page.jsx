@@ -14,8 +14,10 @@ import Link from "next/link"
 import { db } from "../../../../../utils/db"
 import { MockInterview } from "../../../../../utils/schema"
 import { eq } from "drizzle-orm"
+
 import QuestionsSec from "./_components/QuestionsSec"
 import RecordAnsSec from "./_components/RecordAnsSec"
+import { formatTime } from "../../../../../lib/utils"
 
 
 
@@ -48,6 +50,11 @@ export default function StartInterview({ params }) {
     setTimeElapsed(0)
   }, [activeQuestionIndex])
 
+  // Mark a question as complete
+  const handleQuestionComplete = (questionIndex) => {
+    setCompletedQuestions((prev) => new Set(prev).add(questionIndex));
+  };
+
   const GetInterviewDetails = async () => {
     try {
       const result = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
@@ -67,6 +74,11 @@ export default function StartInterview({ params }) {
       );
     }
   };
+
+  // Calculate progress percentage
+  const totalQuestions = mockInterviewQuestion.length || 1;
+  const completedCount = completedQuestions.size || 0;
+  const progressPercentage = (completedCount / totalQuestions) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -138,14 +150,13 @@ export default function StartInterview({ params }) {
                     {mockInterviewQuestion.map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => !recordingState && setActiveQuestionIndex(index)}
-                        disabled={recordingState}
-                        className={`w-8 h-8 rounded-full text-xs font-medium transition-all duration-200 ${
+                        disabled
+                        className={`w-8 h-8 rounded-full text-xs font-medium transition-all duration-200 cursor-not-allowed opacity-60 ${
                           index === activeQuestionIndex
                             ? "bg-blue-600 text-white shadow-lg"
                             : completedQuestions.has(index)
                               ? "bg-green-100 text-green-700 border border-green-200"
-                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              : "bg-gray-100 text-gray-600"
                         }`}
                       >
                         {completedQuestions.has(index) ? <CheckCircle className="w-4 h-4 mx-auto" /> : index + 1}

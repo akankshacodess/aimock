@@ -15,6 +15,8 @@ import { UserAnswer } from "../../../../../../utils/schema"
 import { db } from "../../../../../../utils/db"
 import moment from "moment"
 import { toast } from "sonner"
+// Add import for formatTime
+import { formatTime } from "../../../../../../lib/utils"
 
 export default function RecordAnsSec({
   mockInterviewQuestion,
@@ -27,7 +29,7 @@ export default function RecordAnsSec({
   const { user } = useUser()
   const [loading, setLoading] = useState(false)
   const [webcamEnabled, setWebcamEnabled] = useState(true)
-  const [recordingTime, setRecordingTime] = useState(0)
+  const [recordingTime] = useState(0) // setRecordingTime is not used
 
 
   const { isRecording, results, startSpeechToText, stopSpeechToText, setResults } = useSpeechToText({
@@ -73,14 +75,12 @@ export default function RecordAnsSec({
     }
   };
 
-  // Run this function when `userAnswer` is updated
+  // Only set isProcessing false after answer is ready, don't auto-save
   useEffect(() => {
     if (isProcessing && userAnswer) {
-      console.log("Final user answer:", userAnswer);
-      updateUserAnsInDb(userAnswer);
-      setIsProcessing(false); // Reset processing state
+      setIsProcessing(false); // Just stop processing, don't save yet
     }
-  }, [userAnswer]);
+  }, [userAnswer, isProcessing]);
 
   const updateUserAnsInDb = async (finalAnswer) => {
     setLoading(true);
@@ -122,6 +122,9 @@ export default function RecordAnsSec({
       setUserAnswer(""); // Clear answer
       setResults([]); // Clear results
       setRecordingState(false); // Re-enable navigation
+      if (typeof onQuestionComplete === 'function') {
+        onQuestionComplete(activeQuestionIndex);
+      }
     } catch (error) {
       toast("Failed to record answer. Please try again.");
       console.error("Error saving answer:", error);
@@ -131,7 +134,9 @@ export default function RecordAnsSec({
     setLoading(false);
   };
 
-  if (error) return console.log(error);
+  // if (error) {
+  //   console.log("Error:", error);
+  // }
   return (
     <div className="space-y-6">
       {/* Webcam Card */}
@@ -210,6 +215,7 @@ export default function RecordAnsSec({
                   <div>
                     <p className="text-lg font-semibold text-red-600">Recording...</p>
                     <p className="text-sm text-gray-600">{formatTime(recordingTime)}</p>
+
                   </div>
                 </motion.div>
               ) : loading ? (
@@ -253,24 +259,27 @@ export default function RecordAnsSec({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+              className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-6 shadow flex flex-col md:flex-row items-center gap-4"
             >
-              <div className="flex items-start space-x-2">
-                <Volume2 className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800 mb-1">Your Response:</p>
-                  <p className="text-sm text-blue-700">{userAnswer}</p>
+              <div className="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-200/60">
+                <Volume2 className="w-7 h-7 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-base font-semibold text-blue-900">Your Response</span>
+                  {/* Badge removed because not imported */}
                 </div>
+                <p className="text-base text-blue-800 leading-relaxed break-words">{userAnswer}</p>
               </div>
             </motion.div>
           )}
 
           {/* Control Buttons */}
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-2">
             <Button
               onClick={StartStopRecording}
-              disabled={loading}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              disabled={loading || isProcessing}
+              className={`w-full md:w-auto px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
                 isRecording ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
@@ -293,17 +302,26 @@ export default function RecordAnsSec({
             </Button>
 
             {userAnswer && !isRecording && !loading && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setUserAnswer("")
-                  setResults([])
-                }}
-                className="px-6 py-3 rounded-xl"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </Button>
+              <div className="flex flex-row gap-2 w-full md:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setUserAnswer("");
+                    setResults([]);
+                  }}
+                  className="px-6 py-3 rounded-xl w-1/2 md:w-auto"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={() => updateUserAnsInDb(userAnswer)}
+                  className="px-6 py-3 rounded-xl w-1/2 md:w-auto bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Save Answer
+                </Button>
+              </div>
             )}
           </div>
 
