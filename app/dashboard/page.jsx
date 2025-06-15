@@ -237,7 +237,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-3xl text-black dark:text-white font-bold bg-clip-text text-transparent">
+              <h1 className="text-3xl text-black dark:text-white font-bold bg-clip-text ">
                 Welcome back! 👋
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
