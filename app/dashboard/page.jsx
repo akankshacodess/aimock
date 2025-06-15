@@ -1,15 +1,22 @@
 // final code
-
-
-"use client"
-
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Button } from "../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
-import { Input } from "../../components/ui/input"
-import { Textarea } from "../../components/ui/textarea"
+"use client";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
+import { Input } from "../../components/ui/input";
+import { Textarea } from "../../components/ui/textarea";
 import {
   PlusCircle,
   Calendar,
@@ -25,49 +32,52 @@ import {
   CheckCircle2,
   PlayCircle,
   LoaderCircle,
-} from "lucide-react"
-import Link from "next/link"
-import { toast } from "sonner"
-import { v4 as uuidv4 } from "uuid"
-import { useUser } from "@clerk/nextjs"
-import { useRouter } from "next/navigation"
-import moment from "moment"
-import { chatSession } from "../../utils/AiGemini"
-import { db } from "../../utils/db"
-import { MockInterview } from "../../utils/schema"
+} from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import moment from "moment";
+import { chatSession } from "../../utils/AiGemini";
+import { db } from "../../utils/db";
+import { MockInterview } from "../../utils/schema";
 
 export default function Dashboard() {
-  const [openDialog, setOpenDialog] = useState(false)
-  const [jobPosition, setJobPosition] = useState("")
-  const [jobDesc, setJobDesc] = useState("")
-  const [jobExperience, setJobExperience] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { user } = useUser()
-  const router = useRouter()
+  const [openDialog, setOpenDialog] = useState(false);
+  const [jobPosition, setJobPosition] = useState("");
+  const [jobDesc, setJobDesc] = useState("");
+  const [jobExperience, setJobExperience] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { user } = useUser();
+  const router = useRouter();
 
   // Original form submission logic restored
   const onSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const InputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDesc}, Years of Experience: ${jobExperience}. Generate 10 Interview Questions along with their answers in JSON format.`
+    const InputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDesc}, Years of Experience: ${jobExperience}. Generate 10 Interview Questions along with their answers in JSON format.`;
 
-    let result = null
+    let result = null;
     try {
-      result = await chatSession.sendMessage(InputPrompt)
+      result = await chatSession.sendMessage(InputPrompt);
     } catch (error) {
-      console.error("there is some issues, Please try again later", error)
-      toast("Server error. Please try again later.")
-      setLoading(false)
-      return
+      console.error("there is some issues, Please try again later", error);
+      toast("Server error. Please try again later.");
+      setLoading(false);
+      return;
     }
 
-    const MockJSONResp = result.response.text().replace("```json", "").replace("```", "")
+    const MockJSONResp = result.response
+      .text()
+      .replace("```json", "")
+      .replace("```", "");
 
     if (!MockJSONResp) {
-      toast("Failed to generate questions. Try again.")
-      setLoading(false)
-      return
+      toast("Failed to generate questions. Try again.");
+      setLoading(false);
+      return;
     }
 
     try {
@@ -82,19 +92,19 @@ export default function Dashboard() {
           createdBy: user?.primaryEmailAddress?.emailAddress,
           createdAt: moment().format("DD-MM-yyyy"),
         })
-        .returning({ mockId: MockInterview.mockId })
+        .returning({ mockId: MockInterview.mockId });
 
       if (resp) {
-        setOpenDialog(false)
-        router.push(`/dashboard/interview/${resp[0]?.mockId}`)
+        setOpenDialog(false);
+        router.push(`/dashboard/interview/${resp[0]?.mockId}`);
       }
     } catch (error) {
-      console.error("DB Insert Error:", error)
-      toast("Failed to create interview. Please try again.")
+      console.error("DB Insert Error:", error);
+      toast("Failed to create interview. Please try again.");
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   // Mock data for dashboard
   const recentInterviews = [
@@ -128,7 +138,7 @@ export default function Dashboard() {
       status: "completed",
       duration: "30 mins",
     },
-  ]
+  ];
 
   const stats = [
     {
@@ -167,7 +177,7 @@ export default function Dashboard() {
       bgColor: "bg-orange-50",
       textColor: "text-orange-600",
     },
-  ]
+  ];
 
   const quickActions = [
     {
@@ -191,26 +201,48 @@ export default function Dashboard() {
       color: "from-orange-500 to-red-500",
       action: () => {},
     },
-  ]
+  ];
 
   const achievements = [
-    { title: "First Interview", icon: <Award className="w-5 h-5" />, unlocked: true },
-    { title: "5 Interviews", icon: <Star className="w-5 h-5" />, unlocked: true },
-    { title: "Perfect Score", icon: <Target className="w-5 h-5" />, unlocked: false },
-    { title: "10 Hours Practice", icon: <Clock className="w-5 h-5" />, unlocked: false },
-  ]
+    {
+      title: "First Interview",
+      icon: <Award className="w-5 h-5" />,
+      unlocked: true,
+    },
+    {
+      title: "5 Interviews",
+      icon: <Star className="w-5 h-5" />,
+      unlocked: true,
+    },
+    {
+      title: "Perfect Score",
+      icon: <Target className="w-5 h-5" />,
+      unlocked: false,
+    },
+    {
+      title: "10 Hours Practice",
+      icon: <Clock className="w-5 h-5" />,
+      unlocked: false,
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
       {/* Header Section */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-40">
+      <div className="sticky top-14 backdrop-blur-sm border-b border-gray-200/50 z-40 ">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-3xl text-black dark:text-white font-bold bg-clip-text text-transparent">
                 Welcome back! 👋
               </h1>
-              <p className="text-gray-600 mt-1">Ready to ace your next interview?</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Ready to ace your next interview?
+              </p>
             </motion.div>
 
             <motion.div
@@ -246,19 +278,27 @@ export default function Dashboard() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ y: -5 }}
             >
-              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-50 dark:bg-slate-800 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-green-600 font-medium mt-1">{stat.change}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-400 mb-1">
+                        {stat.title}
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-200">
+                        {stat.value}
+                      </p>
+                      <p className="text-sm text-green-600 dark:text-green-500 font-medium mt-1">
+                        {stat.change}
+                      </p>
                     </div>
                     <div className={`p-3 rounded-xl ${stat.bgColor}`}>
                       <div className={stat.textColor}>{stat.icon}</div>
                     </div>
                   </div>
-                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.color}`} />
+                  <div
+                    className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.color}`}
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -271,12 +311,18 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {quickActions.map((action) => (
-              <motion.div key={action.title} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                key={action.title}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Card
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-slate-800 backdrop-blur-sm group"
                   onClick={action.action}
                 >
                   <CardContent className="p-6 text-center">
@@ -285,8 +331,12 @@ export default function Dashboard() {
                     >
                       {action.icon}
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">{action.title}</h3>
-                    <p className="text-gray-600 text-sm">{action.description}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                      {action.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      {action.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -303,8 +353,13 @@ export default function Dashboard() {
             className="lg:col-span-2"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Recent Interviews</h2>
-              <Button variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Recent Interviews
+              </h2>
+              <Button
+                variant="outline"
+                className=" bg-gray-50 text-black hover:bg-blue-700 hover:text-white  dark:bg-slate-800 dark:text-white  dark:hover:bg-blue-600 dark:hover:text-white rounded-none transition-all duration-200 p-5"
+              >
                 View All
               </Button>
             </div>
@@ -318,7 +373,7 @@ export default function Dashboard() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ x: 5 }}
                 >
-                  <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                  <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 dark:bg-slate-800 backdrop-blur-sm">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
@@ -326,25 +381,37 @@ export default function Dashboard() {
                             {interview.position.charAt(0)}
                           </div>
                           <div>
-                            <h3 className="font-semibold text-gray-900">{interview.position}</h3>
-                            <p className="text-gray-600 text-sm flex items-center">
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-200">
+                              {interview.position}
+                            </h3>
+                            <p className="text-gray-600 text-sm flex items-center dark:text-gray-300">
                               <Briefcase className="w-4 h-4 mr-1" />
                               {interview.company}
                             </p>
-                            <p className="text-gray-500 text-xs mt-1">
+                            <p className="text-gray-500 text-xs mt-1 dark:text-gray-400">
                               {interview.date} • {interview.duration}
                             </p>
                           </div>
                         </div>
 
                         <div className="text-right">
-                          <div className="flex items-center mb-2">
+                          <div className="flex items-center mb-2 ">
                             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                            <span className="font-semibold text-gray-900">{interview.rating}</span>
+                            <span className="font-semibold text-gray-900 dark:text-gray-200">
+                              {interview.rating}
+                            </span>
                           </div>
-                          <p className="text-sm text-gray-600">{interview.questions} questions</p>
-                          <Link href={`/dashboard/interview/${interview.id}/feedback`}>
-                            <Button variant="ghost" size="sm" className="mt-2 text-blue-600 hover:bg-blue-50">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {interview.questions} questions
+                          </p>
+                          <Link
+                            href={`/dashboard/interview/${interview.id}/feedback`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="mt-2 bg-gray-100 text-black  hover:bg-blue-700 hover:text-white  dark:bg-slate-800 dark:text-gray-200  dark:hover:bg-slate-900 dark:hover:text-white transition-all duration-200 rounded-0"
+                            >
                               View Details
                               <ArrowRight className="w-4 h-4 ml-1" />
                             </Button>
@@ -364,15 +431,19 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
               >
                 <Card
-                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group"
+                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 dark:bg-slate-800 transition-all duration-300 cursor-pointer group"
                   onClick={() => setOpenDialog(true)}
                 >
                   <CardContent className="p-8 text-center">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
                       <PlusCircle className="w-8 h-8" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Create New Interview</h3>
-                    <p className="text-gray-600 text-sm">Start a new AI-powered mock interview session</p>
+                    <h3 className="font-semibold text-gray-900 mb-2 dark:text-gray-200">
+                      Create New Interview
+                    </h3>
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
+                      Start a new AI-powered mock interview session
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -400,7 +471,10 @@ export default function Dashboard() {
                       <span>3/5</span>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">
-                      <div className="bg-white h-2 rounded-full" style={{ width: "60%" }}></div>
+                      <div
+                        className="bg-white h-2 rounded-full"
+                        style={{ width: "60%" }}
+                      ></div>
                     </div>
                   </div>
                   <div>
@@ -409,7 +483,10 @@ export default function Dashboard() {
                       <span>4.2/6h</span>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">
-                      <div className="bg-white h-2 rounded-full" style={{ width: "70%" }}></div>
+                      <div
+                        className="bg-white h-2 rounded-full"
+                        style={{ width: "70%" }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -417,7 +494,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Achievements */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-lg">
                   <Award className="w-5 h-5 mr-2 text-yellow-500" />
@@ -426,23 +503,38 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {achievements.map((achievement) => (
-                  <div key={achievement.title} className="flex items-center space-x-3">
+                  <div
+                    key={achievement.title}
+                    className="flex items-center space-x-3"
+                  >
                     <div
-                      className={`p-2 rounded-lg ${achievement.unlocked ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-400"}`}
+                      className={`p-2 rounded-lg ${
+                        achievement.unlocked
+                          ? "bg-yellow-100 text-yellow-600"
+                          : "bg-gray-100 text-gray-400"
+                      }`}
                     >
                       {achievement.icon}
                     </div>
-                    <span className={`text-sm font-medium ${achievement.unlocked ? "text-gray-900" : "text-gray-500"}`}>
+                    <span
+                      className={`text-sm font-medium ${
+                        achievement.unlocked
+                          ? "text-gray-900 dark:text-gray-300"
+                          : "text-gray-500 dark:text-gray-500"
+                      }`}
+                    >
                       {achievement.title}
                     </span>
-                    {achievement.unlocked && <CheckCircle2 className="w-4 h-4 text-green-500 ml-auto" />}
+                    {achievement.unlocked && (
+                      <CheckCircle2 className="w-4 h-4 text-green-500 ml-auto" />
+                    )}
                   </div>
                 ))}
               </CardContent>
             </Card>
 
             {/* Tips Card */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-lg">
                   <Brain className="w-5 h-5 mr-2 text-blue-500" />
@@ -450,11 +542,15 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Use the STAR method (Situation, Task, Action, Result) to structure your behavioral interview answers
-                  effectively.
+                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                  Use the STAR method (Situation, Task, Action, Result) to
+                  structure your behavioral interview answers effectively.
                 </p>
-                <Button variant="ghost" size="sm" className="mt-3 text-blue-600 hover:bg-blue-50 p-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-3 bg-gray-100 text-black  hover:bg-blue-700 hover:text-white  dark:bg-slate-800 dark:text-gray-200   dark:hover:text-blue-400 transition-all duration-200 m-0 p-0"
+                >
                   Learn more →
                 </Button>
               </CardContent>
@@ -475,7 +571,10 @@ export default function Dashboard() {
             <form onSubmit={onSubmit}>
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="job_position" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="job_position"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Job Position
                   </label>
                   <Input
@@ -489,7 +588,10 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <label htmlFor="job_description" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="job_description"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Job Description / Tech Stack
                   </label>
                   <Textarea
@@ -504,7 +606,10 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <label htmlFor="job_experience" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="job_experience"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Years of Experience
                   </label>
                   <Input
@@ -521,7 +626,12 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex justify-end gap-4 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setOpenDialog(false)} className="px-6">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setOpenDialog(false)}
+                    className="px-6"
+                  >
                     Cancel
                   </Button>
                   <Button
@@ -545,5 +655,5 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

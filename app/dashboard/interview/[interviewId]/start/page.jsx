@@ -26,7 +26,18 @@ import { eq } from "drizzle-orm";
 
 import QuestionsSec from "./_components/QuestionsSec";
 import RecordAnsSec from "./_components/RecordAnsSec";
-import { formatTime } from "../../../../../lib/utils";
+
+// Local formatTime function
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const m = Math.floor(totalSeconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(totalSeconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${m}:${s}`;
+}
 
 //final change
 export default function StartInterview({ params }) {

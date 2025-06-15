@@ -28,36 +28,30 @@ import { UserAnswer } from "../../../../../../utils/schema";
 import { db } from "../../../../../../utils/db";
 import moment from "moment";
 import { toast } from "sonner";
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "../../../../../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../../../components/ui/card"
-import Webcam from "react-webcam"
-import useSpeechToText from "react-hook-speech-to-text"
-import { Mic, Square, RotateCcw, Camera, CameraOff, Volume2, Loader2 } from "lucide-react"
-import { chatSession } from "../../../../../../utils/AiGemini"
-import { useUser } from "@clerk/nextjs"
-import { UserAnswer } from "../../../../../../utils/schema"
-import { db } from "../../../../../../utils/db"
-import moment from "moment"
-import { toast } from "sonner"
-// Add import for formatTime
-import { formatTime } from "../../../../../../lib/utils"
+
+// Local formatTime function
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${m}:${s}`;
+}
 
 export default function RecordAnsSec({
   mockInterviewQuestion,
   activeQuestionIndex,
   interviewData,
   setRecordingState,
-  // onQuestionComplete,
+  onQuestionComplete, // uncommented to allow callback
 }) {
-  const [userAnswer, setUserAnswer] = useState("")
-  const { user } = useUser()
-  const [loading, setLoading] = useState(false)
-  const [webcamEnabled, setWebcamEnabled] = useState(true)
-  const [recordingTime] = useState(0) // setRecordingTime is not used
-
-
+  const [userAnswer, setUserAnswer] = useState("");
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
+  const [webcamEnabled, setWebcamEnabled] = useState(true);
+  const [recordingTime] = useState(0); // setRecordingTime is not used
   const {
     isRecording,
     results,
@@ -68,19 +62,15 @@ export default function RecordAnsSec({
     continuous: true,
     useLegacyResults: false,
   });
-
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (results.length > 0) {
-      console.log("Speech results updated:", results);
-
       // Combine all transcripts into one string
       const finalAnswer = results
         .map((r) => r.transcript)
         .join(" ")
         .trim();
-
       if (finalAnswer) {
         setUserAnswer(finalAnswer);
       }
@@ -93,7 +83,6 @@ export default function RecordAnsSec({
         stopSpeechToText();
         setRecordingState(true);
         setIsProcessing(true); // Show loading state while processing
-
         // Now we wait for `useEffect` to update `userAnswer`
       } else {
         setUserAnswer("");
@@ -116,17 +105,12 @@ export default function RecordAnsSec({
 
   const updateUserAnsInDb = async (finalAnswer) => {
     setLoading(true);
-
     if (!finalAnswer) {
       toast.warning("No answer detected. Please try again.");
       setLoading(false);
       return;
     }
-
-    console.log("Final captured answer:", finalAnswer);
-
     const feedbackPrompt = `Question: ${mockInterviewQuestion[activeQuestionIndex]?.question}, User Answer: ${finalAnswer}, Provide rating and feedback in JSON format.`;
-
     try {
       const result = await chatSession.sendMessage(feedbackPrompt);
       const mockJsonResp = result.response
@@ -134,7 +118,6 @@ export default function RecordAnsSec({
         .replace("```json", "")
         .replace("```", "");
       const JsonFeedbackResp = JSON.parse(mockJsonResp);
-
       await db.insert(UserAnswer).values({
         mockIdRef: interviewData?.mockId,
         question: mockInterviewQuestion[activeQuestionIndex]?.question,
@@ -149,12 +132,11 @@ export default function RecordAnsSec({
         userEmail: user?.primaryEmailAddress?.emailAddress,
         createdAt: moment().format("DD-MM-yyyy"),
       });
-
       toast("User answer recorded successfully");
       setUserAnswer(""); // Clear answer
       setResults([]); // Clear results
       setRecordingState(false); // Re-enable navigation
-      if (typeof onQuestionComplete === 'function') {
+      if (typeof onQuestionComplete === "function") {
         onQuestionComplete(activeQuestionIndex);
       }
     } catch (error) {
@@ -162,13 +144,9 @@ export default function RecordAnsSec({
       console.error("Error saving answer:", error);
       setRecordingState(false); // Re-enable question navigation
     }
-
     setLoading(false);
   };
 
-  // if (error) {
-  //   console.log("Error:", error);
-  // }
   return (
     <div className="space-y-6">
       {/* Webcam Card */}
@@ -255,9 +233,12 @@ export default function RecordAnsSec({
                     <div className="absolute inset-0 w-20 h-20 border-4 border-red-300 rounded-full animate-ping mx-auto"></div>
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-red-600">Recording...</p>
-                    <p className="text-sm text-gray-600">{formatTime(recordingTime)}</p>
-
+                    <p className="text-lg font-semibold text-red-600">
+                      Recording...
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatTime(recordingTime)}
+                    </p>
                   </div>
                 </motion.div>
               ) : loading ? (
@@ -311,22 +292,18 @@ export default function RecordAnsSec({
               animate={{ opacity: 1, y: 0 }}
               className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-6 shadow flex flex-col md:flex-row items-center gap-4"
             >
-              <div className="flex items-start space-x-2">
-                <Volume2 className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800 mb-1">
-                    Your Response:
-                  </p>
-                  <p className="text-sm text-blue-700">{userAnswer}</p>
               <div className="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-200/60">
                 <Volume2 className="w-7 h-7 text-blue-600" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-base font-semibold text-blue-900">Your Response</span>
-                  {/* Badge removed because not imported */}
+                  <span className="text-base font-semibold text-blue-900">
+                    Your Response
+                  </span>
                 </div>
-                <p className="text-base text-blue-800 leading-relaxed break-words">{userAnswer}</p>
+                <p className="text-base text-blue-800 leading-relaxed break-words">
+                  {userAnswer}
+                </p>
               </div>
             </motion.div>
           )}
@@ -335,14 +312,11 @@ export default function RecordAnsSec({
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-2">
             <Button
               onClick={StartStopRecording}
-              disabled={loading}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              disabled={loading || isProcessing}
+              className={`w-full md:w-auto px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
                 isRecording
                   ? "bg-red-500 hover:bg-red-600 text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
-              disabled={loading || isProcessing}
-              className={`w-full md:w-auto px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                isRecording ? "bg-red-500 hover:bg-red-600 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
               {loading ? (
@@ -364,17 +338,6 @@ export default function RecordAnsSec({
             </Button>
 
             {userAnswer && !isRecording && !loading && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setUserAnswer("");
-                  setResults([]);
-                }}
-                className="px-6 py-3 rounded-xl"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </Button>
               <div className="flex flex-row gap-2 w-full md:w-auto">
                 <Button
                   variant="outline"
