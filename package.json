@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/react": "19.1.6",
     "daisyui": "^4.12.23",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.31.1",
     "eslint": "9.28.0",
     "eslint-config-next": "15.3.3",
     "postcss": "^8",
