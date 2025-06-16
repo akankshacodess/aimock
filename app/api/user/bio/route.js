@@ -12,6 +12,7 @@ export async function PATCH(request) {
     await db.update(User).set({ bio }).where(eq(User.email, email));
     return Response.json({ success: true });
   } catch (error) {
+    console.error("Error updating bio:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }
@@ -25,6 +26,7 @@ export async function GET(request) {
     const bio = userRow[0]?.bio || "";
     return Response.json({ bio });
   } catch (error) {
+    console.error("Error fetching bio:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }
