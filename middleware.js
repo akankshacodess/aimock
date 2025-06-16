@@ -1,37 +1,22 @@
+// middleware.js
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/forum(.*)",
+  "/api/dashboard(.*)", // ✅ make sure API is protected too
+]);
 
-export default clerkMiddleware();
-//   (auth, req) => {
-//   if (isProtectedRoute(req)) auth().protect();
-// }
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) {
+    auth.protect(); // ✅ Enforce session for Clerk v6+
+  }
+});
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static files (avoids headers() error)
+    // Protect all relevant routes, skip Next.js internals
     "/((?!_next|.*\\..*).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
+    "/(api|trpc)(.*)", // includes /api/dashboard
   ],
 };
-
-// middleware.ts
-// import { authMiddleware } from "@clerk/nextjs";
-
-// export default authMiddleware();
-
-// // Optional: Add a matcher for protected routes
-// export const config = {
-//   matcher: ["/((?!_next|static|favicon.ico).*)"],
-// };
-
-// middleware.ts
-// import { authMiddleware } from "@clerk/nextjs";
-
-// export default authMiddleware();
-
-// // Optional: Add a matcher for protected routes
-// export const config = {
-//   matcher: ["/((?!_next|static|favicon.ico).*)"],
-// };

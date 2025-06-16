@@ -28,6 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu"
+import { SignOutButton } from "@clerk/nextjs";
 import ThemeToggle from "../../../components/theme-toggle"
 
 
@@ -153,10 +154,12 @@ export default function Header() {
                   <span>Help & Support</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
+                <SignOutButton>
+                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </SignOutButton>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -227,13 +230,15 @@ export default function Header() {
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </Button>
+              <SignOutButton>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </Button>
+              </SignOutButton>
             </div>
           </div>
         </motion.div>

@@ -63,8 +63,25 @@ export default function StartInterview({ params }) {
         throw new Error("No interview found. It may have been removed.")
       }
 
-      const jsonMockResp = JSON.parse(result[0].jsonMockResp)
-      setMockInterviewQuestion(jsonMockResp)
+      let parsed;
+      try {
+        parsed = JSON.parse(result[0].jsonMockResp);
+      } catch (e) {
+        parsed = result[0].jsonMockResp;
+      }
+      let questionsArr = [];
+      if (Array.isArray(parsed)) {
+        questionsArr = parsed;
+      } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.questions)) {
+        questionsArr = parsed.questions;
+      } else if (typeof parsed === 'string') {
+        try {
+          const tryParse = JSON.parse(parsed);
+          if (Array.isArray(tryParse)) questionsArr = tryParse;
+          else if (tryParse && typeof tryParse === 'object' && Array.isArray(tryParse.questions)) questionsArr = tryParse.questions;
+        } catch {}
+      }
+      setMockInterviewQuestion(questionsArr);
       setInterviewData(result[0])
     } catch (error) {
       console.error("Error fetching interview details:", error);

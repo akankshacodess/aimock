@@ -3,7 +3,8 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -23,182 +24,152 @@ import {
   Star,
   Brain,
   CheckCircle2,
-  PlayCircle,
   LoaderCircle,
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
-import { v4 as uuidv4 } from "uuid"
-import { useUser } from "@clerk/nextjs"
+import { useUser, useAuth } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
-import moment from "moment"
 import { chatSession } from "../../utils/AiGemini"
 import { db } from "../../utils/db"
 import { MockInterview } from "../../utils/schema"
 
+
 export default function Dashboard() {
-  const [openDialog, setOpenDialog] = useState(false)
-  const [jobPosition, setJobPosition] = useState("")
-  const [jobDesc, setJobDesc] = useState("")
-  const [jobExperience, setJobExperience] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { user } = useUser()
-  const router = useRouter()
+  const [openDialog, setOpenDialog] = useState(false);
+  const [jobPosition, setJobPosition] = useState("");
+  const [jobDesc, setJobDesc] = useState("");
+  const [jobExperience, setJobExperience] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [interviews, setInterviews] = useState([]);
+  const [stats, setStats] = useState({ total: 0, avgScore: 0, practiceTime: 0, successRate: 0 });
+  const [achievements, setAchievements] = useState([]);
+  const { user } = useUser();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { getToken } = useAuth();
 
-  // Original form submission logic restored
+  // Fetch user interviews on mount, when user changes, or when route changes to /dashboard
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Use the custom JWT template for Clerk
+        const token = await getToken({ template: 'aimock' }); // <-- specify your template name here
+        const res = await fetch("/api/dashboard", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch dashboard data");
+
+        const data = await res.json();
+        setInterviews(data.interviews || []);
+        setStats(data.stats || { total: 0, avgScore: 0, practiceTime: 0, successRate: 0 });
+
+        // Add icons to achievements here (backend only sends raw structure)
+        const iconMap = {
+          "First Interview": <Award className="w-5 h-5" />,
+          "5 Interviews": <Star className="w-5 h-5" />,
+          "Perfect Score": <Target className="w-5 h-5" />,
+          "10 Hours Practice": <Clock className="w-5 h-5" />,
+        };
+
+        const achievementsWithIcons = (data.achievements || []).map(ach => ({
+          ...ach,
+          icon: iconMap[ach.title] || <CheckCircle2 className="w-5 h-5" />,
+        }));
+
+        setAchievements(achievementsWithIcons);
+        // Show toast on successful user authentication and dashboard load
+        toast.success("User authenticated! Dashboard loaded.");
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+        setInterviews([]);
+        setStats({ total: 0, avgScore: 0, practiceTime: 0, successRate: 0 });
+        setAchievements([]);
+      }
+    };
+
+    if (pathname === "/dashboard" && user?.primaryEmailAddress?.emailAddress) {
+      fetchData();
+    }
+  }, [user, pathname]);
+
+
+  // Interview creation logic (from JobForm)
   const onSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const InputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDesc}, Years of Experience: ${jobExperience}. Generate 10 Interview Questions along with their answers in JSON format.`
+    const InputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDesc}, Years of Experience: ${jobExperience}. Generate 10 Interview Questions along with their answers in JSON format.`;
 
-    let result = null
+    let result = null;
     try {
-      result = await chatSession.sendMessage(InputPrompt)
+      result = await chatSession.sendMessage(InputPrompt);
     } catch (error) {
-      console.error("there is some issues, Please try again later", error)
-      toast("Server error. Please try again later.")
-      setLoading(false)
-      return
+      console.error("there is some issues, Please try again later", error);
+      toast("Server error. Please try again later.");
+      setLoading(false);
+      return;
     }
 
-    const MockJSONResp = result.response.text().replace("```json", "").replace("```", "")
+    let MockJSONResp = "";
+    if (typeof result.response === "string") {
+      MockJSONResp = result.response.replace("```json", "").replace("```", "");
+    } else if (typeof result.response === "object" && result.response !== null) {
+      // Try to get string from .text() if available (old API)
+      if (typeof result.response.text === "function") {
+        MockJSONResp = await result.response.text();
+        MockJSONResp = MockJSONResp.replace("```json", "").replace("```", "");
+      } else {
+        // Fallback: try JSON.stringify
+        MockJSONResp = JSON.stringify(result.response);
+      }
+    } else {
+      MockJSONResp = String(result.response);
+    }
 
     if (!MockJSONResp) {
-      toast("Failed to generate questions. Try again.")
-      setLoading(false)
-      return
+      toast("Failed to generate questions. Try again.");
+      setLoading(false);
+      return;
     }
 
     try {
-      const resp = await db
-        .insert(MockInterview)
-        .values({
-          mockId: uuidv4(),
-          jsonMockResp: MockJSONResp,
+      const token = await getToken({ template: 'aimock' });
+      const resp = await fetch("/api/interview/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           jobPosition,
           jobDesc,
           jobExperience,
-          createdBy: user?.primaryEmailAddress?.emailAddress,
-          createdAt: moment().format("DD-MM-yyyy"),
-        })
-        .returning({ mockId: MockInterview.mockId })
-
-      if (resp) {
-        setOpenDialog(false)
-        router.push(`/dashboard/interview/${resp[0]?.mockId}`)
-      }
+          jsonMockResp: MockJSONResp,
+        }),
+      });
+      if (!resp.ok) throw new Error("Failed to create interview");
+      const data = await resp.json();
+      const newMockId = data.mockId;
+      setOpenDialog(false);
+      router.push(`/dashboard/interview/${newMockId}`);
     } catch (error) {
-      console.error("DB Insert Error:", error)
-      toast("Failed to create interview. Please try again.")
+      console.error("API Insert Error:", error);
+      toast("Failed to create interview. Please try again.");
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  // Mock data for dashboard
-  const recentInterviews = [
-    {
-      id: "1",
-      position: "Frontend Developer",
-      company: "Tech Solutions Inc.",
-      date: "June 5, 2025",
-      rating: 4.2,
-      questions: 10,
-      status: "completed",
-      duration: "25 mins",
-    },
-    {
-      id: "2",
-      position: "UX Designer",
-      company: "Creative Studio",
-      date: "June 3, 2025",
-      rating: 3.8,
-      questions: 8,
-      status: "completed",
-      duration: "20 mins",
-    },
-    {
-      id: "3",
-      position: "Full Stack Developer",
-      company: "StartupXYZ",
-      date: "June 1, 2025",
-      rating: 4.5,
-      questions: 12,
-      status: "completed",
-      duration: "30 mins",
-    },
-  ]
-
-  const stats = [
-    {
-      title: "Total Interviews",
-      value: "12",
-      change: "+3 this week",
-      icon: <Calendar className="w-6 h-6" />,
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-600",
-    },
-    {
-      title: "Practice Time",
-      value: "4.2h",
-      change: "+45m today",
-      icon: <Clock className="w-6 h-6" />,
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      textColor: "text-green-600",
-    },
-    {
-      title: "Average Score",
-      value: "4.2/5",
-      change: "+0.3 improvement",
-      icon: <BarChart3 className="w-6 h-6" />,
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-600",
-    },
-    {
-      title: "Success Rate",
-      value: "89%",
-      change: "+12% this month",
-      icon: <TrendingUp className="w-6 h-6" />,
-      color: "from-orange-500 to-orange-600",
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-600",
-    },
-  ]
-
-  const quickActions = [
-    {
-      title: "Start Quick Interview",
-      description: "5-minute practice session",
-      icon: <PlayCircle className="w-8 h-8" />,
-      color: "from-blue-500 to-purple-500",
-      action: () => setOpenDialog(true),
-    },
-    {
-      title: "Review Feedback",
-      description: "Check your latest results",
-      icon: <BarChart3 className="w-8 h-8" />,
-      color: "from-green-500 to-teal-500",
-      action: () => {},
-    },
-    {
-      title: "Practice Skills",
-      description: "Focus on weak areas",
-      icon: <Target className="w-8 h-8" />,
-      color: "from-orange-500 to-red-500",
-      action: () => {},
-    },
-  ]
-
-  const achievements = [
-    { title: "First Interview", icon: <Award className="w-5 h-5" />, unlocked: true },
-    { title: "5 Interviews", icon: <Star className="w-5 h-5" />, unlocked: true },
-    { title: "Perfect Score", icon: <Target className="w-5 h-5" />, unlocked: false },
-    { title: "10 Hours Practice", icon: <Clock className="w-5 h-5" />, unlocked: false },
-  ]
+  // Weekly goals (can be adjusted)
+  const WEEKLY_INTERVIEW_GOAL = 5;
+  const WEEKLY_PRACTICE_GOAL = 6; // in hours
+  const interviewsCompleted = stats.total;
+  const practiceTime = Number(stats.practiceTime);
+  const interviewProgress = Math.min((interviewsCompleted / WEEKLY_INTERVIEW_GOAL) * 100, 100);
+  const practiceProgress = Math.min((practiceTime / WEEKLY_PRACTICE_GOAL) * 100, 100);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -231,38 +202,101 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* Stats Grid */}
+        {/* Stats Grid (dynamic) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-            >
-              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-green-600 font-medium mt-1">{stat.change}</p>
-                    </div>
-                    <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                      <div className={stat.textColor}>{stat.icon}</div>
-                    </div>
+          <motion.div
+            key="total"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0 }}
+            whileHover={{ y: -5 }}
+          >
+            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Total Interviews</p>
+                    <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
                   </div>
-                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.color}`} />
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                  <div className="p-3 rounded-xl bg-blue-50">
+                    <Calendar className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600" />
+              </CardContent>
+            </Card>
+          </motion.div>
+          <motion.div
+            key="practice"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            whileHover={{ y: -5 }}
+          >
+            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Practice Time</p>
+                    <p className="text-3xl font-bold text-gray-900">{stats.practiceTime}h</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-green-50">
+                    <Clock className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-600" />
+              </CardContent>
+            </Card>
+          </motion.div>
+          <motion.div
+            key="avgScore"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            whileHover={{ y: -5 }}
+          >
+            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Average Score</p>
+                    <p className="text-3xl font-bold text-gray-900">{stats.avgScore}/5</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-purple-50">
+                    <BarChart3 className="w-6 h-6 text-purple-600" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-600" />
+              </CardContent>
+            </Card>
+          </motion.div>
+          <motion.div
+            key="successRate"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            whileHover={{ y: -5 }}
+          >
+            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Success Rate</p>
+                    <p className="text-3xl font-bold text-gray-900">{stats.successRate}</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-orange-50">
+                    <TrendingUp className="w-6 h-6 text-orange-600" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600" />
+              </CardContent>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* Quick Actions */}
@@ -273,24 +307,49 @@ export default function Dashboard() {
         >
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {quickActions.map((action) => (
-              <motion.div key={action.title} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
-                  onClick={action.action}
-                >
-                  <CardContent className="p-6 text-center">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r ${action.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      {action.icon}
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">{action.title}</h3>
-                    <p className="text-gray-600 text-sm">{action.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+            {/* Example quick actions, replace or extend as needed */}
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
+                onClick={() => setOpenDialog(true)}
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                    <PlusCircle className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">New Interview</h3>
+                  <p className="text-gray-600 text-sm">Start a new AI-powered mock interview session</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
+                onClick={() => router.push('/dashboard')}
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">View Stats</h3>
+                  <p className="text-gray-600 text-sm">See your interview performance and progress</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Card
+                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
+                onClick={() => router.push('/dashboard')}
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                    <Star className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Achievements</h3>
+                  <p className="text-gray-600 text-sm">Check your unlocked badges and milestones</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -310,52 +369,64 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-4">
-              {recentInterviews.map((interview, index) => (
-                <motion.div
-                  key={interview.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ x: 5 }}
-                >
-                  <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                            {interview.position.charAt(0)}
+              {interviews.length === 0 ? (
+                <div className="text-center text-gray-500 py-12">
+                  <p>No interviews found. Start your first mock interview!</p>
+                </div>
+              ) : (
+                interviews.map((interview, index) => {
+                  let company = interview.jobDesc?.split(/[,|;]/)[0] || "-";
+                  let date = interview.createdAt || "-";
+                  let questions = 0;
+                  try {
+                    questions = JSON.parse(interview.jsonMockResp)?.length || 0;
+                  } catch {}
+                  return (
+                    <motion.div
+                      key={interview.mockId || interview.id || index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      whileHover={{ x: 5 }}
+                    >
+                      <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                                {interview.jobPosition?.charAt(0) || "?"}
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-gray-900">{interview.jobPosition}</h3>
+                                <p className="text-gray-600 text-sm flex items-center">
+                                  <Briefcase className="w-4 h-4 mr-1" />
+                                  {company}
+                                </p>
+                                <p className="text-gray-500 text-xs mt-1">
+                                  {date}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center mb-2">
+                                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
+                                <span className="font-semibold text-gray-900">-</span>
+                              </div>
+                              <p className="text-sm text-gray-600">{questions} questions</p>
+                              <Link href={`/dashboard/interview/${interview.mockId}/feedback`}>
+                                <Button variant="ghost" size="sm" className="mt-2 text-blue-600 hover:bg-blue-50">
+                                  View Details
+                                  <ArrowRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              </Link>
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">{interview.position}</h3>
-                            <p className="text-gray-600 text-sm flex items-center">
-                              <Briefcase className="w-4 h-4 mr-1" />
-                              {interview.company}
-                            </p>
-                            <p className="text-gray-500 text-xs mt-1">
-                              {interview.date} • {interview.duration}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <div className="flex items-center mb-2">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                            <span className="font-semibold text-gray-900">{interview.rating}</span>
-                          </div>
-                          <p className="text-sm text-gray-600">{interview.questions} questions</p>
-                          <Link href={`/dashboard/interview/${interview.id}/feedback`}>
-                            <Button variant="ghost" size="sm" className="mt-2 text-blue-600 hover:bg-blue-50">
-                              View Details
-                              <ArrowRight className="w-4 h-4 ml-1" />
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })
+              )}
               {/* Create New Interview Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -397,19 +468,19 @@ export default function Dashboard() {
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span>Interviews Completed</span>
-                      <span>3/5</span>
+                      <span>{interviewsCompleted}/{WEEKLY_INTERVIEW_GOAL}</span>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">
-                      <div className="bg-white h-2 rounded-full" style={{ width: "60%" }}></div>
+                      <div className="bg-white h-2 rounded-full" style={{ width: `${interviewProgress}%` }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span>Practice Time</span>
-                      <span>4.2/6h</span>
+                      <span>{practiceTime}/{WEEKLY_PRACTICE_GOAL}h</span>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-2">
-                      <div className="bg-white h-2 rounded-full" style={{ width: "70%" }}></div>
+                      <div className="bg-white h-2 rounded-full" style={{ width: `${practiceProgress}%` }}></div>
                     </div>
                   </div>
                 </div>
@@ -425,19 +496,24 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {achievements.map((achievement) => (
-                  <div key={achievement.title} className="flex items-center space-x-3">
-                    <div
-                      className={`p-2 rounded-lg ${achievement.unlocked ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-400"}`}
-                    >
-                      {achievement.icon}
+                {achievements.length === 0 ? (
+                  <div className="text-gray-400 text-sm">No achievements yet.</div>
+                ) : (
+                  achievements.map((achievement) => (
+                    <div key={achievement.title} className="flex items-center space-x-3">
+                      <div
+                        className={`p-2 rounded-lg ${achievement.unlocked ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-400"}`}
+                      >
+                        {achievement.icon}
+                      </div>
+                      <span className={`text-sm font-medium ${achievement.unlocked ? "text-gray-900" : "text-gray-500"}`}>
+                        {achievement.title}
+                      </span>
+                      {achievement.unlocked && <CheckCircle2 className="w-4 h-4 text-green-500 ml-auto" />}
                     </div>
-                    <span className={`text-sm font-medium ${achievement.unlocked ? "text-gray-900" : "text-gray-500"}`}>
-                      {achievement.title}
-                    </span>
-                    {achievement.unlocked && <CheckCircle2 className="w-4 h-4 text-green-500 ml-auto" />}
-                  </div>
-                ))}
+                  ))
+                )
+                }
               </CardContent>
             </Card>
 
