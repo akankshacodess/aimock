@@ -5,6 +5,7 @@ export const User = pgTable("user", {
   id: serial("id").primaryKey(),
   email: varchar("email").notNull().unique(),
   interviewIds: text("interviewIds").default("[]"), // Store as JSON string
+  bio: text("bio").default(""),
 });
 
 export const MockInterview = pgTable("mockInterview", {
