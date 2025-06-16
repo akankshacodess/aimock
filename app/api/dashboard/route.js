@@ -23,7 +23,9 @@ export async function GET(request) {
     if (userRow && userRow.length > 0) {
       try {
         interviewIds = JSON.parse(userRow[0].interviewIds || "[]");
-      } catch (e) { interviewIds = []; }
+      } catch {
+        interviewIds = [];
+      }
     }
     console.log('Dashboard API: interviewIds for user', email, interviewIds);
 

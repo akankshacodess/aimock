@@ -66,7 +66,7 @@ export default function StartInterview({ params }) {
       let parsed;
       try {
         parsed = JSON.parse(result[0].jsonMockResp);
-      } catch (e) {
+      } catch {
         parsed = result[0].jsonMockResp;
       }
       let questionsArr = [];

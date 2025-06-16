@@ -31,8 +31,6 @@ import { toast } from "sonner"
 import { useUser, useAuth } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { chatSession } from "../../utils/AiGemini"
-import { db } from "../../utils/db"
-import { MockInterview } from "../../utils/schema"
 
 
 export default function Dashboard() {
@@ -48,8 +46,6 @@ export default function Dashboard() {
   const router = useRouter();
   const pathname = usePathname();
   const { getToken } = useAuth();
-
-  // Fetch user interviews on mount, when user changes, or when route changes to /dashboard
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -93,7 +89,7 @@ export default function Dashboard() {
     if (pathname === "/dashboard" && user?.primaryEmailAddress?.emailAddress) {
       fetchData();
     }
-  }, [user, pathname]);
+  }, [user, pathname, getToken]);
 
 
   // Interview creation logic (from JobForm)

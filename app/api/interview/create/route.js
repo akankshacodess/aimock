@@ -42,7 +42,9 @@ export async function POST(request) {
       let interviewIds = [];
       try {
         interviewIds = JSON.parse(userRow[0].interviewIds || "[]");
-      } catch (e) { interviewIds = []; }
+      } catch {
+        interviewIds = [];
+      }
       if (!interviewIds.includes(mockId)) {
         interviewIds.push(mockId);
         const updateResult = await db.update(User)
