@@ -141,9 +141,11 @@ export default function Header() {
               <DropdownMenuContent align="end" className="w-56 border-0 shadow-xl dark:bg-gray-800">
                 <DropdownMenuLabel className="font-semibold">My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <Link href="/dashboard/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                   <Settings className="mr-2 h-4 w-4" />
@@ -217,11 +219,14 @@ export default function Header() {
             </div>
             <div className="mt-3 space-y-1">
               <Button
+                asChild
                 variant="ghost"
                 className="w-full justify-start text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
-                <User className="mr-2 h-4 w-4" />
-                Profile
+                <Link href="/dashboard/profile" className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
               </Button>
               <Button
                 variant="ghost"
