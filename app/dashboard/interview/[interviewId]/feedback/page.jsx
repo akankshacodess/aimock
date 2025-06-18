@@ -11,7 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../../../../../components/ui/collapsible";
-// import { Progress } from "../../../../../components/ui/progress";
+// import { Progress } from "../../../../../components/ui/progress"
 import { Badge } from "../../../../../components/ui/badge";
 import {
   Tabs,
@@ -25,16 +25,13 @@ import {
   Download,
   Share2,
   ArrowLeft,
-  // CheckCircle,
   XCircle,
   TrendingUp,
   Target,
-  // Brain,
   Award,
   Lightbulb,
   MessageSquare,
   ThumbsUp,
-  // ThumbsDown,
   RefreshCw,
 } from "lucide-react";
 import { db } from "../../../../../utils/db";
@@ -162,7 +159,7 @@ export default function Feedback() {
         borderColor: "border-red-200",
         icon: <RefreshCw className="w-6 h-6" />,
         message:
-          "Don&apos;t worry! Every expert was once a beginner. Focus on providing more detailed answers with specific examples.",
+          "Don't worry! Every expert was once a beginner. Focus on providing more detailed answers with specific examples.",
       };
     } else if (Number(averageRating) <= 4.0) {
       return {
@@ -172,7 +169,7 @@ export default function Feedback() {
         borderColor: "border-orange-200",
         icon: <TrendingUp className="w-6 h-6" />,
         message:
-          "You&apos;re on the right track! Work on adding more specific examples and technical details to your answers.",
+          "You're on the right track! Work on adding more specific examples and technical details to your answers.",
       };
     } else {
       return {
@@ -182,7 +179,7 @@ export default function Feedback() {
         borderColor: "border-green-200",
         icon: <Award className="w-6 h-6" />,
         message:
-          "Outstanding performance! Your answers were well-structured and detailed. You&apos;re interview-ready!",
+          "Outstanding performance! Your answers were well-structured and detailed. you're interview-ready!",
       };
     }
   };
@@ -190,9 +187,9 @@ export default function Feedback() {
   const remarkData = getRemarkData();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
+      <div className="bg-card/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -203,10 +200,10 @@ export default function Feedback() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-foreground">
                   Interview Feedback
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Detailed analysis of your performance
                 </p>
               </div>
@@ -234,13 +231,13 @@ export default function Feedback() {
           className="mb-8"
         >
           <Card
-            className={`border-0 shadow-xl ${remarkData.bgColor} ${remarkData.borderColor} border-2`}
+            className={`border-0 shadow-xl ${remarkData.bgColor} ${remarkData.borderColor} border-2 dark:bg-card dark:border-border`}
           >
             <CardContent className="p-8">
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="md:col-span-1 text-center">
                   <div
-                    className={`w-20 h-20 ${remarkData.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 ${remarkData.borderColor} border-2`}
+                    className={`w-20 h-20 ${remarkData.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 ${remarkData.borderColor} border-2 dark:bg-card dark:border-border`}
                   >
                     <div className={remarkData.color}>{remarkData.icon}</div>
                   </div>
@@ -254,32 +251,32 @@ export default function Feedback() {
                         className={`w-5 h-5 ${
                           i < Math.round(Number(averageRating))
                             ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
+                            : "text-gray-300 dark:text-gray-600"
                         }`}
                       />
                     ))}
                   </div>
-                  <div className="text-3xl font-bold text-gray-900">
+                  <div className="text-3xl font-bold text-foreground">
                     {averageRating}/5.0
                   </div>
                 </div>
 
                 <div className="md:col-span-3 space-y-6">
-                  <p className="text-gray-700 text-lg leading-relaxed">
+                  <p className="text-lg leading-relaxed text-foreground">
                     {remarkData.message}
                   </p>
 
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-white/80 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-bold text-green-600">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                         {excellent}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-muted-foreground">
                         Excellent (4-5)
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
                         <div
-                          className="bg-green-500 h-2 rounded-full"
+                          className="bg-green-500 dark:bg-green-400 h-2 rounded-full"
                           style={{
                             width: `${
                               feedbackList.length > 0
@@ -290,14 +287,16 @@ export default function Feedback() {
                         ></div>
                       </div>
                     </div>
-                    <div className="bg-white/80 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-bold text-orange-600">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                      <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                         {good}
                       </div>
-                      <div className="text-sm text-gray-600">Good (3-4)</div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="text-sm text-muted-foreground">
+                        Good (3-4)
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
                         <div
-                          className="bg-orange-500 h-2 rounded-full"
+                          className="bg-orange-500 dark:bg-orange-400 h-2 rounded-full"
                           style={{
                             width: `${
                               feedbackList.length > 0
@@ -308,16 +307,16 @@ export default function Feedback() {
                         ></div>
                       </div>
                     </div>
-                    <div className="bg-white/80 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-bold text-red-600">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                      <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                         {needsWork}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-muted-foreground">
                         Needs Work (1-3)
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
                         <div
-                          className="bg-red-500 h-2 rounded-full"
+                          className="bg-red-500 dark:bg-red-400 h-2 rounded-full"
                           style={{
                             width: `${
                               feedbackList.length > 0

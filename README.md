@@ -1,37 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Mock Interview Dashboard
+
+A production-ready, full-stack AI-powered mock interview platform built with Next.js, Clerk authentication, Neon/Postgres, Drizzle ORM, and Tailwind CSS.
+
+## Features
+- Secure, user-specific dashboard with Clerk JWT authentication
+- Neon/Postgres backend with Drizzle ORM
+- Create, store, and manage mock interviews per user
+- Dynamic stats: interviews completed, practice time, average score, success rate, achievements
+- All authentication and DB logic handled server-side
+- Clean, modern UI with Tailwind CSS
+- No test/dev code or duplicate UI
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Set up environment variables:**
+   - Clerk API keys and JWT template (see Clerk docs)
+   - Neon/Postgres database URL
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Run database migrations:**
+   - Use Drizzle or your preferred migration tool to create tables (`user`, `mockInterview`, `userAnswer`)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
-## Learn More
+## Usage
+- Sign in with Clerk
+- Create a new interview using the "New Interview" button
+- View your stats, achievements, and recent interviews on the dashboard
+- Start and complete mock interviews, track your progress
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
+- Next.js (App Router)
+- Clerk (Authentication)
+- Neon/Postgres (Database)
+- Drizzle ORM
+- Tailwind CSS
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
+- `app/` — Next.js app, API routes, dashboard, interview pages
+- `utils/` — DB schema, Drizzle config, helpers
+- `components/` — UI components
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Deployment
+Deploy easily on Vercel, Railway, or your preferred platform. Ensure all environment variables are set in production.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-"# aimock" 
+Built with ❤️ for seamless, AI-powered interview practice.

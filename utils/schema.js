@@ -1,5 +1,12 @@
 import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 
+// User table with interviewIds as a JSON/text array
+export const User = pgTable("user", {
+  id: serial("id").primaryKey(),
+  email: varchar("email").notNull().unique(),
+  interviewIds: text("interviewIds").default("[]"), // Store as JSON string
+});
+
 export const MockInterview = pgTable("mockInterview", {
   id: serial("id").primaryKey(),
   jsonMockResp: text("jsonMockResp").notNull(),
