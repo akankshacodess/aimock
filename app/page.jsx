@@ -136,78 +136,79 @@ export default function Hero() {
                 confidence before your dream job interview.
               </motion.p>
 
-              {/* Trust Indicators */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400"
-              >
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span>Free to start</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span>No credit card required</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span>Instant feedback</span>
-                </div>
-              </motion.div>
-
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
+              <div className="sm:place-items-center sm:space-y-4">
+                {/* Trust Indicators */}
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400"
                 >
-                  <Link href="/sign-in">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Free to start</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>No credit card required</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Instant feedback</span>
+                  </div>
+                </motion.div>
+
+                {/* CTA Buttons */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
+                  className="flex flex-col sm:flex-row gap-4"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link href="/sign-in">
+                      <Button
+                        className={`px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 group ${
+                          loading
+                            ? "cursor-not-allowed opacity-60 hover:shadow-xl"
+                            : "cursor-pointer"
+                        }`}
+                        onClick={() => setLoading(true)}
+                        disabled={loading}
+                        size="lg"
+                      >
+                        {loading ? (
+                          <>
+                            <LoaderCircle className="animate-spin mr-2 " />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            🎯 Start Practicing Now
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </>
+                        )}
+                      </Button>
+                    </Link>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <Button
-                      className={`px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 group ${
-                        loading
-                          ? "cursor-not-allowed opacity-60 hover:shadow-xl"
-                          : "cursor-pointer"
-                      }`}
-                      onClick={() => setLoading(true)}
-                      disabled={loading}
+                      variant="outline"
+                      className="px-8 py-6 text-lg border-2 bg-slate-900 text-white border-gray-800 hover:bg-blue-700 hover:text-white hover:border-blue-700 dark:bg-slate-900 dark:text-white dark:border-gray-800 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-800 rounded-2xl transition-all duration-300"
                       size="lg"
                     >
-                      {loading ? (
-                        <>
-                          <LoaderCircle className="animate-spin mr-2 " />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          🎯 Start Practicing Now
-                          <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </>
-                      )}
+                      Watch Demo
                     </Button>
-                  </Link>
+                  </motion.div>
                 </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="outline"
-                    className="px-8 py-6 text-lg border-2 bg-slate-900 text-white border-gray-800 hover:bg-blue-700 hover:text-white hover:border-blue-700 dark:bg-slate-900 dark:text-white dark:border-gray-800 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-800 rounded-2xl transition-all duration-300"
-                    size="lg"
-                  >
-                    Watch Demo
-                  </Button>
-                </motion.div>
-              </motion.div>
-
+              </div>
               {/* Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -302,9 +303,9 @@ export default function Hero() {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 sm:text-center sm:place-items-center"
               >
-                <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white mb-6">
+                <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white mb-6 ">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">

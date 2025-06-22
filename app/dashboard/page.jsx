@@ -198,7 +198,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500">
       {/* Header Section */}
-      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-40 shadow-sm">
+      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-16 z-40 shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <motion.div
@@ -439,7 +439,7 @@ export default function Dashboard() {
               </h2>
               <Button
                 variant="outline"
-                className="text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-900 dark:hover:bg-blue-900/30 font-semibold dark:bg-gray-900/90"
+                className="text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30 dark:bg-gray-900/90 dark:hover:border-blue-900"
               >
                 View All
               </Button>
@@ -502,7 +502,7 @@ export default function Dashboard() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="mt-2 text-blue-600 hover:bg-blue-50"
+                                  className="mt-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30 dark:hover:border-blue-900"
                                 >
                                   View Details
                                   <ArrowRight className="w-4 h-4 ml-1" />
@@ -524,11 +524,11 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
               >
                 <Card
-                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group"
+                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group dark:bg-gray-900/90 dark:hover:bg-gray-800"
                   onClick={() => setOpenDialog(true)}
                 >
                   <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300  ">
                       <PlusCircle className="w-8 h-8" />
                     </div>
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -621,7 +621,7 @@ export default function Dashboard() {
                       <span
                         className={`text-sm font-medium ${
                           achievement.unlocked
-                            ? "text-gray-900"
+                            ? "text-gray-900 dark:text-gray-200"
                             : "text-gray-500"
                         }`}
                       >
@@ -645,14 +645,14 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed dark:text-gray-400">
                   Use the STAR method (Situation, Task, Action, Result) to
                   structure your behavioral interview answers effectively.
                 </p>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="mt-3 text-blue-600 hover:bg-blue-50 p-0"
+                  className="mt-3 p-3 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30 dark:bg-gray-900/90 dark:hover:border-blue-900"
                 >
                   Learn more →
                 </Button>
@@ -675,7 +675,7 @@ export default function Dashboard() {
               <div>
                 <label
                   htmlFor="job_position"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200"
                 >
                   Job Position
                 </label>
@@ -684,7 +684,7 @@ export default function Dashboard() {
                   placeholder="e.g. Frontend Developer"
                   value={jobPosition}
                   onChange={(e) => setJobPosition(e.target.value)}
-                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="w-full border-gray-200 focus:border-blue-600 focus:ring-blue-500 rounded-lg"
                   required
                 />
               </div>
@@ -692,7 +692,7 @@ export default function Dashboard() {
               <div>
                 <label
                   htmlFor="job_description"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200"
                 >
                   Job Description / Tech Stack
                 </label>
@@ -701,7 +701,7 @@ export default function Dashboard() {
                   placeholder="e.g. React, TypeScript, Tailwind CSS, Node.js"
                   value={jobDesc}
                   onChange={(e) => setJobDesc(e.target.value)}
-                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="w-full border-gray-200 focus:border-blue-600 focus:ring-blue-500 rounded-lg"
                   rows={4}
                   required
                 />
@@ -710,7 +710,7 @@ export default function Dashboard() {
               <div>
                 <label
                   htmlFor="job_experience"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200"
                 >
                   Years of Experience
                 </label>
@@ -722,7 +722,7 @@ export default function Dashboard() {
                   placeholder="e.g. 3"
                   value={jobExperience}
                   onChange={(e) => setJobExperience(e.target.value)}
-                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="w-full border-gray-200 focus:border-blue-600 focus:ring-blue-500 rounded-lg"
                   required
                 />
               </div>

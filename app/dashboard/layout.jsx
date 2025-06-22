@@ -14,8 +14,8 @@ function DashboardLayout({ children }) {
         <div className="min-h-screen bg-background text-foreground">
           <div className="max-w-screen sm:mx-auto">
             <Header />
-            <main className="relative">
-              <Toaster position="top-right" />
+            <main className="relative mb-5">
+              <Toaster position="bottom" />
               {children}
             </main>
           </div>
