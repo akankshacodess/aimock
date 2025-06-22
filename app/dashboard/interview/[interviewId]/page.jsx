@@ -43,92 +43,104 @@ function Interview({ params }) {
       }
     } catch (error) {
       console.error("Error fetching interview details:", error);
-      setError("An error occurred while fetching interview details. Please try again later.");
+      setError(
+        "An error occurred while fetching interview details. Please try again later."
+      );
     }
   };
 
   return (
-    <div className="p-10 ">
-      <h2 className="font-bold text-2xl">Let&apos;s Get Started</h2>
+    <div className="bg-slate-100 dark:bg-gray-900/95 min-h-20 ">
+      <div className="fixed pt-10 px-10 ">
+        <h2 className="font-bold text-2xl">Let&apos;s Get Started</h2>
 
-      {error ? (
-        <div className="p-5 bg-red-100 border border-red-400 text-red-700 rounded">
-          <strong>Error: </strong>{error}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="flex flex-col my-5 gap-5 ">
-            <div className="flex flex-col my-5 gap-5 p-5 rounded-lg border">
-              {interviewData ? (
-                <>
-                  <h2 className="text-lg">
-                    <strong>Job Role/Job Position:</strong>{" "}
-                    {interviewData.jobPosition}
-                  </h2>
-                  <h2 className="text-lg">
-                    <strong>Job Description/Tech Stack: </strong>{" "}
-                    {interviewData.jobDesc}
-                  </h2>
-                  <h2 className="text-lg">
-                    <strong>Years of Experience: </strong>{" "}
-                    {interviewData.jobExperience}
-                  </h2>
-                </>
+        {error ? (
+          <div className="p-5 bg-red-100 border border-red-400 text-red-700 rounded">
+            <strong>Error: </strong>
+            {error}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="flex flex-col my-5 gap-5 ">
+              <div className="flex flex-col my-5 gap-5 p-5 rounded-lg border dark:bg-gray-900/95">
+                {interviewData ? (
+                  <>
+                    <h2 className="text-lg">
+                      <strong>Job Role/Job Position:</strong>{" "}
+                      {interviewData.jobPosition}
+                    </h2>
+                    <h2 className="text-lg">
+                      <strong>Job Description/Tech Stack: </strong>{" "}
+                      {interviewData.jobDesc}
+                    </h2>
+                    <h2 className="text-lg">
+                      <strong>Years of Experience: </strong>{" "}
+                      {interviewData.jobExperience}
+                    </h2>
+                  </>
+                ) : (
+                  <h2>Loading interview details...</h2>
+                )}
+              </div>
+              <div className="p-5 border rounded-lg border-yellow-200 bg-yellow-100 dark:border-orange-400 ">
+                <h2 className="flex gap-2 items-center text-yellow-600 dark:text-yellow-600">
+                  <Lightbulb />
+                  <strong>Information</strong>
+                </h2>
+                <h2 className="mt-3 text-yellow-600 dark:text-yellow-600">
+                  {process.env.NEXT_PUBLIC_INFORMATION}
+                </h2>
+              </div>
+            </div>
+            <div>
+              {webCamEnabled ? (
+                <Webcam
+                  onUserMedia={() => {
+                    try {
+                      setWebCamEnabled(true);
+                    } catch (error) {
+                      console.error("Error enabling webcam:", error);
+                      setError("Failed to enable webcam.");
+                    }
+                  }}
+                  onUserMediaError={(error) => {
+                    console.error("Webcam error:", error);
+                    setWebCamEnabled(false);
+                    setError("Webcam access denied or not supported.");
+                  }}
+                  mirrored={true}
+                  style={{
+                    height: 300,
+                    width: 300,
+                  }}
+                />
               ) : (
-                <h2>Loading interview details...</h2>
+                <>
+                  <WebcamIcon className="h-72 w-full my-7 p-20 bg-white dark:bg-gray-900/95 rounded-lg border" />
+                  <div className="w-full flex justify-center">
+                    <Button
+                      variant="ghost"
+                      className=" hover:bg-blue-500 hover:text-gray-100 bg-white dark:bg-gray-900/95 dark:hover:bg-gray-700"
+                      onClick={() => setWebCamEnabled(true)}
+                    >
+                      Enable Web Cam and Microphone
+                    </Button>
+                  </div>
+                </>
               )}
-            </div>
-            <div className="p-5 border rounded-lg border-yellow-300 bg-yellow-100">
-              <h2 className="flex gap-2 items-center text-yellow-500">
-                <Lightbulb />
-                <strong>Information</strong>
-              </h2>
-              <h2 className="mt-3 text-yellow-600">
-                {process.env.NEXT_PUBLIC_INFORMATION}
-              </h2>
+              <div className="flex justify-center my-5">
+                <Link href={"/dashboard/interview/" + interviewId + "/start"}>
+                  <Button
+                    disabled={!!error}
+                    className="hover:bg-blue-600 hover:text-white dark:bg-gray-900/95 dark:hover:bg-gray-700 dark:text-white"
+                  >
+                    Start Interview
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
-          <div>
-            {webCamEnabled ? (
-              <Webcam
-                onUserMedia={() => {
-                  try {
-                    setWebCamEnabled(true);
-                  } catch (error) {
-                    console.error("Error enabling webcam:", error);
-                    setError("Failed to enable webcam.");
-                  }
-                }}
-                onUserMediaError={(error) => {
-                  console.error("Webcam error:", error);
-                  setWebCamEnabled(false);
-                  setError("Webcam access denied or not supported.");
-                }}
-                mirrored={true}
-                style={{
-                  height: 300,
-                  width: 300,
-                }}
-              />
-            ) : (
-              <>
-                <WebcamIcon className="h-72 w-full my-7 p-20 bg-secondary rounded-lg border" />
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => setWebCamEnabled(true)}
-                >
-                  Enable Web Cam and Microphone
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-      <div className="flex justify-end items-end">
-        <Link href={"/dashboard/interview/" + interviewId + "/start"}>
-          <Button disabled={!!error}>Start Interview</Button>
-        </Link>
+        )}
       </div>
     </div>
   );
