@@ -561,7 +561,7 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
               >
                 <Card
-                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group w-full"
+                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group dark:bg-gray-900/90 dark:hover:bg-gray-800"
                   onClick={() => setOpenDialog(true)}
                 >
                   <CardContent className="p-8 text-center">
