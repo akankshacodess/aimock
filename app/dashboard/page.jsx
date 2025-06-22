@@ -196,24 +196,23 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500">
       {/* Header Section */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text dark:from-white dark:to-gray-300">
                 Welcome back! 👋
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1 text-base font-medium">
                 Ready to ace your next interview?
               </p>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -221,7 +220,7 @@ export default function Dashboard() {
             >
               <Button
                 onClick={() => setOpenDialog(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group font-semibold"
               >
                 <PlusCircle className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                 New Interview
@@ -231,187 +230,200 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
         {/* Stats Grid (dynamic) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        <div className="py-6">
           <motion.div
-            key="total"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0 }}
-            whileHover={{ y: -5 }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
-                      Total Interviews
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stats.total}
-                    </p>
+            <motion.div
+              key="total"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0 }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Total Interviews
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        {stats.total}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/30">
+                      <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-blue-50">
-                    <Calendar className="w-6 h-6 text-blue-600" />
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900" />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div
+              key="practice"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Practice Time
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        {stats.practiceTime}h
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-green-50 dark:bg-green-900/30">
+                      <Clock className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </div>
                   </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600" />
-              </CardContent>
-            </Card>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-800 dark:to-green-900" />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div
+              key="avgScore"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Average Score
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        {stats.avgScore}/5
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-900/30">
+                      <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-800 dark:to-purple-900" />
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div
+              key="successRate"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Success Rate
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        {stats.successRate}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-orange-50 dark:bg-orange-900/30">
+                      <TrendingUp className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-800 dark:to-orange-900" />
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="py-6 mx-auto">
           <motion.div
-            key="practice"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            whileHover={{ y: -5 }}
-          >
-            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
-                      Practice Time
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stats.practiceTime}h
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-green-50">
-                    <Clock className="w-6 h-6 text-green-600" />
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-600" />
-              </CardContent>
-            </Card>
-          </motion.div>
-          <motion.div
-            key="avgScore"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={{ y: -5 }}
-          >
-            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
-                      Average Score
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stats.avgScore}/5
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-purple-50">
-                    <BarChart3 className="w-6 h-6 text-purple-600" />
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-600" />
-              </CardContent>
-            </Card>
-          </motion.div>
-          <motion.div
-            key="successRate"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            whileHover={{ y: -5 }}
           >
-            <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
-                      Success Rate
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Example quick actions, replace or extend as needed */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  onClick={() => setOpenDialog(true)}
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                      <PlusCircle className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      New Interview
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Start a new AI-powered mock interview session
                     </p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stats.successRate}
+                  </CardContent>
+                </Card>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                      <BarChart3 className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      View Stats
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      See your interview performance and progress
                     </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-orange-50">
-                    <TrendingUp className="w-6 h-6 text-orange-600" />
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600" />
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                      <Star className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      Achievements
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Check your unlocked badges and milestones
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           </motion.div>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Example quick actions, replace or extend as needed */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Card
-                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
-                onClick={() => setOpenDialog(true)}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
-                    <PlusCircle className="w-8 h-8" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    New Interview
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Start a new AI-powered mock interview session
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Card
-                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
-                onClick={() => router.push("/dashboard")}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
-                    <BarChart3 className="w-8 h-8" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    View Stats
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    See your interview performance and progress
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Card
-                className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm group"
-                onClick={() => router.push("/dashboard")}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-400 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
-                    <Star className="w-8 h-8" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    Achievements
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Check your unlocked badges and milestones
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.div>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Recent Interviews */}
@@ -421,13 +433,13 @@ export default function Dashboard() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="lg:col-span-2"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Recent Interviews
               </h2>
               <Button
                 variant="outline"
-                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                className="text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-900 dark:hover:bg-blue-900/30 font-semibold dark:bg-gray-900/90"
               >
                 View All
               </Button>
@@ -454,7 +466,7 @@ export default function Dashboard() {
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       whileHover={{ x: 5 }}
                     >
-                      <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                      <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm">
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
@@ -462,14 +474,14 @@ export default function Dashboard() {
                                 {interview.jobPosition?.charAt(0) || "?"}
                               </div>
                               <div>
-                                <h3 className="font-semibold text-gray-900">
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                                   {interview.jobPosition}
                                 </h3>
-                                <p className="text-gray-600 text-sm flex items-center">
+                                <p className="text-gray-600 dark:text-gray-400 text-sm flex items-center">
                                   <Briefcase className="w-4 h-4 mr-1" />
                                   {company}
                                 </p>
-                                <p className="text-gray-500 text-xs mt-1">
+                                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
                                   {date}
                                 </p>
                               </div>
@@ -477,11 +489,11 @@ export default function Dashboard() {
                             <div className="text-right">
                               <div className="flex items-center mb-2">
                                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                                <span className="font-semibold text-gray-900">
+                                <span className="font-semibold text-gray-900 dark:text-gray-100">
                                   -
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
                                 {questions} questions
                               </p>
                               <Link
@@ -519,10 +531,10 @@ export default function Dashboard() {
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
                       <PlusCircle className="w-8 h-8" />
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       Create New Interview
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 dark:text-gray-200 text-sm">
                       Start a new AI-powered mock interview session
                     </p>
                   </CardContent>
@@ -539,7 +551,7 @@ export default function Dashboard() {
             className="space-y-6"
           >
             {/* Progress Card */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:from-blue-900 dark:to-purple-900 dark:text-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">This Week&apos;s Progress</h3>
@@ -579,7 +591,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Achievements */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 dark:bg-gray-900/80 backdrop-blur-md">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-lg">
                   <Award className="w-5 h-5 mr-2 text-yellow-500" />
@@ -625,7 +637,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Tips Card */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/90 dark:bg-gray-900/80 backdrop-blur-md">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-lg">
                   <Brain className="w-5 h-5 mr-2 text-blue-500" />
@@ -652,94 +664,92 @@ export default function Dashboard() {
 
       {/* Enhanced Dialog with ORIGINAL FUNCTIONALITY RESTORED */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="sm:max-w-[600px] border-0 shadow-2xl">
+        <DialogContent className="sm:max-w-[600px] border-0 shadow-2xl bg-white/95 dark:bg-gray-900/95">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Create New Interview
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <form onSubmit={onSubmit}>
-              <div className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="job_position"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Job Position
-                  </label>
-                  <Input
-                    id="job_position"
-                    placeholder="e.g. Frontend Developer"
-                    value={jobPosition}
-                    onChange={(e) => setJobPosition(e.target.value)}
-                    className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                    required
-                  />
-                </div>
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="job_position"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Job Position
+                </label>
+                <Input
+                  id="job_position"
+                  placeholder="e.g. Frontend Developer"
+                  value={jobPosition}
+                  onChange={(e) => setJobPosition(e.target.value)}
+                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  required
+                />
+              </div>
 
-                <div>
-                  <label
-                    htmlFor="job_description"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Job Description / Tech Stack
-                  </label>
-                  <Textarea
-                    id="job_description"
-                    placeholder="e.g. React, TypeScript, Tailwind CSS, Node.js"
-                    value={jobDesc}
-                    onChange={(e) => setJobDesc(e.target.value)}
-                    className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                    rows={4}
-                    required
-                  />
-                </div>
+              <div>
+                <label
+                  htmlFor="job_description"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Job Description / Tech Stack
+                </label>
+                <Textarea
+                  id="job_description"
+                  placeholder="e.g. React, TypeScript, Tailwind CSS, Node.js"
+                  value={jobDesc}
+                  onChange={(e) => setJobDesc(e.target.value)}
+                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  rows={4}
+                  required
+                />
+              </div>
 
-                <div>
-                  <label
-                    htmlFor="job_experience"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Years of Experience
-                  </label>
-                  <Input
-                    id="job_experience"
-                    type="number"
-                    min="0"
-                    max="50"
-                    placeholder="e.g. 3"
-                    value={jobExperience}
-                    onChange={(e) => setJobExperience(e.target.value)}
-                    className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                    required
-                  />
-                </div>
+              <div>
+                <label
+                  htmlFor="job_experience"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Years of Experience
+                </label>
+                <Input
+                  id="job_experience"
+                  type="number"
+                  min="0"
+                  max="50"
+                  placeholder="e.g. 3"
+                  value={jobExperience}
+                  onChange={(e) => setJobExperience(e.target.value)}
+                  className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  required
+                />
+              </div>
 
-                <div className="flex justify-end gap-4 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setOpenDialog(false)}
-                    className="px-6"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6"
-                  >
-                    {loading ? (
-                      <>
-                        <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
-                        Creating...
-                      </>
-                    ) : (
-                      "Create Interview"
-                    )}
-                  </Button>
-                </div>
+              <div className="flex justify-end gap-4 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpenDialog(false)}
+                  className="px-6 font-semibold"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 font-semibold"
+                >
+                  {loading ? (
+                    <>
+                      <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Interview"
+                  )}
+                </Button>
               </div>
             </form>
           </div>

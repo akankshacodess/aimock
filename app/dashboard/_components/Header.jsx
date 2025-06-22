@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   Menu,
   X,
@@ -17,9 +17,9 @@ import {
   BarChart3,
   BookOpen,
   Zap,
-} from "lucide-react"
-import { Button } from "../../../components/ui/button"
-import { Input } from "../../../components/ui/input"
+} from "lucide-react";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,14 +27,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu"
+} from "../../../components/ui/dropdown-menu";
 import { SignOutButton } from "@clerk/nextjs";
-import ThemeToggle from "../../../components/theme-toggle"
-
+import ThemeToggle from "../../../components/theme-toggle";
 
 export default function Header() {
-  const path = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const path = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
     {
@@ -61,17 +60,21 @@ export default function Header() {
       current: path.includes("/resources"),
       icon: <BookOpen className="w-4 h-4" />,
     },
-  ]
+  ];
 
   return (
-    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm border-b border-gray-200/50 dark:border-gray-700/50 top-0 z-50 ">
+      <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Navigation */}
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/dashboard">
-                <motion.div className="flex items-center group" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.div
+                  className="flex items-center group"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold mr-3 group-hover:shadow-lg transition-shadow duration-300">
                     AI
                   </div>
@@ -138,8 +141,13 @@ export default function Header() {
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 border-0 shadow-xl dark:bg-gray-800">
-                <DropdownMenuLabel className="font-semibold">My Account</DropdownMenuLabel>
+              <DropdownMenuContent
+                align="end"
+                className="w-56 border-0 shadow-xl dark:bg-gray-800"
+              >
+                <DropdownMenuLabel className="font-semibold">
+                  My Account
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                   <User className="mr-2 h-4 w-4" />
@@ -172,7 +180,11 @@ export default function Header() {
               className="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
+              {mobileMenuOpen ? (
+                <X className="block h-6 w-6" />
+              ) : (
+                <Menu className="block h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
@@ -211,8 +223,12 @@ export default function Header() {
                 </div>
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-gray-800 dark:text-gray-200">User</div>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">user@example.com</div>
+                <div className="text-base font-medium text-gray-800 dark:text-gray-200">
+                  User
+                </div>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  user@example.com
+                </div>
               </div>
             </div>
             <div className="mt-3 space-y-1">
@@ -244,5 +260,5 @@ export default function Header() {
         </motion.div>
       )}
     </header>
-  )
+  );
 }
