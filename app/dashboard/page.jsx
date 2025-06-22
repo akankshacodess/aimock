@@ -34,6 +34,7 @@ import {
   Brain,
   CheckCircle2,
   LoaderCircle,
+  Menu,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -55,6 +56,7 @@ export default function Dashboard() {
     successRate: 0,
   });
   const [achievements, setAchievements] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
@@ -196,27 +198,45 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500">
+    <div
+      className="min-h-screen w-full box-border bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500"
+      style={{ overflowX: "hidden" }}
+    >
       {/* Header Section */}
-      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-16 z-40 shadow-sm ">
+      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-40 shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
+              className="min-w-0 flex-1"
             >
-              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text dark:from-white dark:to-gray-300">
+              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text dark:from-white dark:to-gray-300 truncate">
                 Welcome back! 👋
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1 text-base font-medium">
+              <p className="text-gray-600 dark:text-gray-300 mt-1 text-base font-medium truncate">
                 Ready to ace your next interview?
               </p>
             </motion.div>
+            {/* Hamburger menu for tablet and mobile */}
+            <div className="flex items-center md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="mr-2"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-7 h-7" />
+              </Button>
+            </div>
+            {/* Main actions (hidden on mobile/tablet, shown on md+) */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
+              className="min-w-0 hidden md:flex"
             >
               <Button
                 onClick={() => setOpenDialog(true)}
@@ -227,17 +247,34 @@ export default function Dashboard() {
               </Button>
             </motion.div>
           </div>
+          {/* Mobile/Tablet menu (toggle) */}
+          {menuOpen && (
+            <div className="block md:hidden mt-4">
+              <Button
+                onClick={() => setOpenDialog(true)}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group font-semibold mb-2"
+              >
+                <PlusCircle className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                New Interview
+              </Button>
+              {/* Add more menu items here if needed */}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+      {/* Main Content Area */}
+      <main
+        className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10"
+        style={{ boxSizing: "border-box" }}
+      >
         {/* Stats Grid (dynamic) */}
-        <div className="py-6">
+        <div className="py-6 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full"
           >
             <motion.div
               key="total"
@@ -347,7 +384,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="py-6 mx-auto">
+        <div className="py-6 mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -356,14 +393,14 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               Quick Actions
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6 w-full">
               {/* Example quick actions, replace or extend as needed */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Card
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group w-full"
                   onClick={() => setOpenDialog(true)}
                 >
                   <CardContent className="p-6 text-center">
@@ -384,7 +421,7 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Card
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group w-full"
                   onClick={() => router.push("/dashboard")}
                 >
                   <CardContent className="p-6 text-center">
@@ -405,7 +442,7 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Card
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 dark:border-gray-700 dark:shadow-gray-900/30 backdrop-blur-sm group w-full"
                   onClick={() => router.push("/dashboard")}
                 >
                   <CardContent className="p-6 text-center">
@@ -425,16 +462,16 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 w-full min-w-0">
           {/* Recent Interviews */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="lg:col-span-2"
+            className="lg:col-span-2 w-full min-w-0"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 w-full min-w-0">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white truncate">
                 Recent Interviews
               </h2>
               <Button
@@ -445,7 +482,7 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 w-full">
               {interviews.length === 0 ? (
                 <div className="text-center text-gray-500 py-12">
                   <p>No interviews found. Start your first mock interview!</p>
@@ -524,7 +561,7 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
               >
                 <Card
-                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group dark:bg-gray-900/90 dark:hover:bg-gray-800"
+                  className="border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-50 transition-all duration-300 cursor-pointer group w-full"
                   onClick={() => setOpenDialog(true)}
                 >
                   <CardContent className="p-8 text-center">
@@ -548,7 +585,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="space-y-6"
+            className="space-y-6 w-full min-w-0"
           >
             {/* Progress Card */}
             <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:from-blue-900 dark:to-purple-900 dark:text-white">
@@ -660,7 +697,7 @@ export default function Dashboard() {
             </Card>
           </motion.div>
         </div>
-      </div>
+      </main>
 
       {/* Enhanced Dialog with ORIGINAL FUNCTIONALITY RESTORED */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
