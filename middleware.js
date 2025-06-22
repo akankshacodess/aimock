@@ -16,7 +16,7 @@ export default clerkMiddleware((auth, req) => {
 export const config = {
   matcher: [
     // Protect all relevant routes, skip Next.js internals
-    "/((?!_next|.*\\..*).*)",
+    "/((?!_next|.\\..).*)",
     "/(api|trpc)(.*)", // includes /api/dashboard
   ],
 };
