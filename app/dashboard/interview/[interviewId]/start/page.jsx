@@ -47,7 +47,7 @@ export default function StartInterview({ params }) {
   const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [recordingState, setRecordingState] = useState(false);
-  const completedQuestions = new Set();
+  const [completedQuestions, setCompletedQuestions] = useState(new Set());
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
 
@@ -67,7 +67,6 @@ export default function StartInterview({ params }) {
     setQuestionStartTime(Date.now());
     setTimeElapsed(0);
   }, [activeQuestionIndex]);
-
   // Mark a question as complete
   const handleQuestionComplete = (questionIndex) => {
     setCompletedQuestions((prev) => new Set(prev).add(questionIndex));
