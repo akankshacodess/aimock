@@ -94,7 +94,7 @@ export default function Feedback() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center ">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your feedback...</p>
@@ -105,7 +105,7 @@ export default function Feedback() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center ">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <XCircle className="w-8 h-8 text-red-600" />
@@ -154,12 +154,16 @@ export default function Feedback() {
     if (averageRating === "0" || Number(averageRating) <= 2.0) {
       return {
         title: "Keep Practicing",
-        color: "text-red-500",
+        color: "text-red-500 ",
         bgColor: "bg-red-50",
         borderColor: "border-red-200",
         icon: <RefreshCw className="w-6 h-6" />,
-        message:
-          "Don't worry! Every expert was once a beginner. Focus on providing more detailed answers with specific examples.",
+        message: (
+          <div className="dark:text-gray-300">
+            "Don't worry! Every expert was once a beginner. Focus on providing
+            more detailed answers with specific examples.",
+          </div>
+        ),
       };
     } else if (Number(averageRating) <= 4.0) {
       return {
@@ -187,20 +191,23 @@ export default function Feedback() {
   const remarkData = getRemarkData();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground dark:bg-gray-900/90 ">
       {/* Header */}
-      <div className="bg-card/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+      <div className="bg-card/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50 dark:bg-gray-900/90">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-700"
+                >
                   <ArrowLeft className="w-4 h-4" />
                   Dashboard
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">
+                <h1 className="text-2xl font-bold text-foreground ">
                   Interview Feedback
                 </h1>
                 <p className="text-muted-foreground">
@@ -209,11 +216,17 @@ export default function Feedback() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-700"
+              >
                 <Download className="w-4 h-4" />
                 Export Report
               </Button>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-700"
+              >
                 <Share2 className="w-4 h-4" />
                 Share
               </Button>
@@ -222,7 +235,7 @@ export default function Feedback() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 ">
         {/* Performance Overview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -231,13 +244,13 @@ export default function Feedback() {
           className="mb-8"
         >
           <Card
-            className={`border-0 shadow-xl ${remarkData.bgColor} ${remarkData.borderColor} border-2 dark:bg-card dark:border-border`}
+            className={`border-0 shadow-xl ${remarkData.bgColor} ${remarkData.borderColor} border-2 dark:bg-gray-900 dark:border-gray-900/5`}
           >
             <CardContent className="p-8">
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="md:col-span-1 text-center">
                   <div
-                    className={`w-20 h-20 ${remarkData.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 ${remarkData.borderColor} border-2 dark:bg-card dark:border-border`}
+                    className={`w-20 h-20 ${remarkData.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 ${remarkData.borderColor} border-2  dark:border-border dark:bg-gray-900/90 `}
                   >
                     <div className={remarkData.color}>{remarkData.icon}</div>
                   </div>
@@ -256,7 +269,7 @@ export default function Feedback() {
                       />
                     ))}
                   </div>
-                  <div className="text-3xl font-bold text-foreground">
+                  <div className="text-3xl font-bold text-foreground dark:text-gray-200">
                     {averageRating}/5.0
                   </div>
                 </div>
@@ -267,7 +280,7 @@ export default function Feedback() {
                   </p>
 
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border dark:bg-gray-900 dark:border-gray-800">
                       <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                         {excellent}
                       </div>
@@ -287,7 +300,7 @@ export default function Feedback() {
                         ></div>
                       </div>
                     </div>
-                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border dark:bg-gray-900 dark:border-gray-800">
                       <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                         {good}
                       </div>
@@ -307,7 +320,7 @@ export default function Feedback() {
                         ></div>
                       </div>
                     </div>
-                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border">
+                    <div className="bg-card/80 rounded-lg p-4 text-center border border-border dark:bg-gray-900 dark:border-gray-800">
                       <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                         {needsWork}
                       </div>
@@ -341,12 +354,12 @@ export default function Feedback() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300 p-1">
               Question-by-Question Analysis
             </h2>
             <Badge
               variant="outline"
-              className="bg-blue-50 text-blue-700 border-blue-200"
+              className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900 dark:text-gray-200 "
             >
               {feedbackList.length} Questions Completed
             </Badge>
@@ -360,8 +373,8 @@ export default function Feedback() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Collapsible className="border-0 shadow-lg rounded-xl overflow-hidden bg-white/90 backdrop-blur-sm">
-                  <CollapsibleTrigger className="w-full flex items-center justify-between p-6 hover:bg-gray-50/80 transition-colors">
+                <Collapsible className="border-0 shadow-lg rounded-xl overflow-hidden bg-white/90 backdrop-blur-sm dark:bg-gray-900/90 ">
+                  <CollapsibleTrigger className="w-full flex items-center justify-between p-6 hover:bg-gray-50/80 transition-colors dark:hover:bg-gray-800/80">
                     <div className="flex items-center space-x-4">
                       <div
                         className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white ${
@@ -374,11 +387,11 @@ export default function Feedback() {
                       >
                         {item.rating}/5
                       </div>
-                      <div className="text-left flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                      <div className="text-left flex-1 ">
+                        <h3 className="font-semibold text-gray-900 mb-1 dark:text-gray-300">
                           Question {index + 1}
                         </h3>
-                        <p className="text-gray-600 text-sm line-clamp-2">
+                        <p className="text-gray-600 text-sm line-clamp-2 dark:text-gray-400">
                           {item.question}
                         </p>
                       </div>
@@ -387,10 +400,10 @@ export default function Feedback() {
                       <Badge
                         className={
                           Number(item.rating) >= 4
-                            ? "bg-green-100 text-green-700 border-green-200"
+                            ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-800 dark:text-green-200 dark:border-green-700"
                             : Number(item.rating) >= 3
-                            ? "bg-orange-100 text-orange-700 border-orange-200"
-                            : "bg-red-100 text-red-700 border-red-200"
+                            ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-800 dark:text-orange-200 dark:border-orange-700"
+                            : "bg-red-100 text-red-700 border-red-200 dark:bg-red-800 dark:text-red-200 dark:border-red-700"
                         }
                       >
                         {Number(item.rating) >= 4
@@ -420,62 +433,62 @@ export default function Feedback() {
                           <TabsTrigger value="feedback">Feedback</TabsTrigger>
                         </TabsList>
                         <TabsContent value="overview">
-                          <div className="bg-blue-50/60 border border-blue-100 rounded-lg p-5 mb-2">
+                          <div className="bg-blue-50/60 border border-blue-100 rounded-lg p-5 mb-2 dark:bg-gray-900 dark:border-gray-700">
                             <div className="mb-2 flex items-center gap-2">
                               <Target className="w-5 h-5 text-blue-600" />
-                              <span className="font-semibold text-blue-900">
+                              <span className="font-semibold text-blue-900 dark:text-blue-600">
                                 Question:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-gray-400">
                                 {item.question}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Star className="w-5 h-5 text-yellow-400" />
-                              <span className="font-semibold text-blue-900">
+                              <span className="font-semibold text-blue-900 dark:text-blue-600">
                                 Score:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-gray-400">
                                 {item.rating}/5
                               </span>
                             </div>
                           </div>
                         </TabsContent>
                         <TabsContent value="your-answer">
-                          <div className="bg-white border border-blue-100 rounded-lg p-5 mb-2">
+                          <div className="bg-white border border-blue-100 rounded-lg p-5 mb-2 dark:bg-gray-900 dark:border-gray-700">
                             <div className="flex items-center gap-2 mb-2">
                               <MessageSquare className="w-5 h-5 text-blue-600" />
-                              <span className="font-semibold text-blue-900">
+                              <span className="font-semibold text-blue-900 dark:text-blue-600">
                                 Your Answer:
                               </span>
                             </div>
-                            <p className="text-gray-800">
+                            <p className="text-gray-800 dark:text-gray-400">
                               {item.userAns || "No answer recorded"}
                             </p>
                           </div>
                         </TabsContent>
                         <TabsContent value="ideal-answer">
-                          <div className="bg-green-50 border border-green-100 rounded-lg p-5 mb-2">
+                          <div className="bg-green-50 border border-green-100 rounded-lg p-5 mb-2 dark:bg-gray-900 dark:border-gray-700 ">
                             <div className="flex items-center gap-2 mb-2">
                               <Lightbulb className="w-5 h-5 text-green-600" />
-                              <span className="font-semibold text-green-900">
+                              <span className="font-semibold text-green-900 dark:text-green-600">
                                 Ideal Answer:
                               </span>
                             </div>
-                            <p className="text-gray-800">
+                            <p className="text-gray-800 dark:text-gray-400">
                               {item.correctAns || "No ideal answer available"}
                             </p>
                           </div>
                         </TabsContent>
                         <TabsContent value="feedback">
-                          <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-5 mb-2">
+                          <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-5 mb-2 dark:bg-gray-900 dark:border-gray-700">
                             <div className="flex items-center gap-2 mb-2">
                               <ThumbsUp className="w-5 h-5 text-yellow-600" />
-                              <span className="font-semibold text-yellow-900">
+                              <span className="font-semibold text-yellow-900 dark:text-yellow-600">
                                 AI Feedback:
                               </span>
                             </div>
-                            <p className="text-gray-800">
+                            <p className="text-gray-800 dark:text-gray-400">
                               {item.feedback
                                 ? (() => {
                                     try {
@@ -510,7 +523,10 @@ export default function Feedback() {
               Back to Dashboard
             </Button>
           </Link>
-          <Button variant="outline" className="px-8 py-3 rounded-xl">
+          <Button
+            variant="outline"
+            className="px-8 py-3 rounded-xl dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-700"
+          >
             Practice Again
           </Button>
         </motion.div>
