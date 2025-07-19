@@ -160,8 +160,8 @@ export default function Feedback() {
         icon: <RefreshCw className="w-6 h-6" />,
         message: (
           <div className="dark:text-gray-300">
-            "Don't worry! Every expert was once a beginner. Focus on providing
-            more detailed answers with specific examples.",
+            &quot; Don&apos;t worry! Every expert was once a beginner. Focus on providing
+            more detailed answers with specific examples.&quot; ,
           </div>
         ),
       };

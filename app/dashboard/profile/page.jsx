@@ -27,6 +27,9 @@ import {
   BarChart3,
 } from "lucide-react"
 
+// Use absolute API URL for deployment compatibility
+const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 export default function ProfilePage() {
   const { user } = useUser()
   const { getToken } = useAuth()
@@ -45,7 +48,7 @@ export default function ProfilePage() {
     // Fetch user stats from dashboard API
     async function fetchStats() {
       const token = await getToken({ template: "aimock" })
-      const res = await fetch("/api/dashboard", {
+      const res = await fetch(`${baseURL}/api/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +65,7 @@ export default function ProfilePage() {
     // Fetch bio on mount
     async function fetchBio() {
       const token = await getToken({ template: "aimock" })
-      const res = await fetch("/api/user/bio", {
+      const res = await fetch(`${baseURL}/api/user/bio`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
@@ -233,7 +236,7 @@ export default function ProfilePage() {
                           onClick={async () => {
                             setBioLoading(true)
                             const token = await getToken({ template: "aimock" })
-                            await fetch("/api/user/bio", {
+                            await fetch(`${baseURL}/api/user/bio`, {
                               method: "PATCH",
                               headers: {
                                 "Content-Type": "application/json",

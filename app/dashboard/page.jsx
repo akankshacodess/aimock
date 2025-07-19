@@ -40,7 +40,11 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+
 import { chatSession } from "../../utils/AiGemini";
+
+// Use absolute API URL for deployment compatibility
+const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export default function Dashboard() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -66,7 +70,7 @@ export default function Dashboard() {
       try {
         // Use the custom JWT template for Clerk
         const token = await getToken({ template: "aimock" }); // <-- specify your template name here
-        const res = await fetch("/api/dashboard", {
+        const res = await fetch(`${baseURL}/api/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -157,7 +161,7 @@ export default function Dashboard() {
 
     try {
       const token = await getToken({ template: "aimock" });
-      const resp = await fetch("/api/interview/create", {
+      const resp = await fetch(`${baseURL}/api/interview/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
