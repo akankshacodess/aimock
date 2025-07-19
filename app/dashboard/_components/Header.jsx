@@ -46,7 +46,8 @@ export default function Header() {
   const { user } = useUser();
   const userName =
     user?.firstName || user?.username || user?.fullName || "User";
-  const userEmail = user?.primaryEmailAddress?.emailAddress || "user@example.com";
+  const userEmail =
+    user?.primaryEmailAddress?.emailAddress || "user@example.com";
 
   const navigation = [
     {
@@ -151,8 +152,14 @@ export default function Header() {
                       My Account
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <Link href="/dashboard/profile" className="flex items-center">
+                    <DropdownMenuItem
+                      asChild
+                      className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <Link
+                        href="/dashboard/profile"
+                        className="flex items-center"
+                      >
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>

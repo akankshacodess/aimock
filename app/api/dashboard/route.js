@@ -10,10 +10,20 @@ export async function GET(request) {
     const userId = auth.userId;
     // Clerk v6+ getAuth does not return user object directly, so fetch email from claims
     // For Session JWT V2, email is in the claims object
-    const email = (auth.sessionClaims?.email || (auth.sessionClaims?.primaryEmailAddress && auth.sessionClaims.primaryEmailAddress.emailAddress) || "").toLowerCase().trim();
+    const email = (
+      auth.sessionClaims?.email ||
+      (auth.sessionClaims?.primaryEmailAddress &&
+        auth.sessionClaims.primaryEmailAddress.emailAddress) ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
 
     if (!userId || !email) {
-      console.error("No email found in Clerk session claims", auth.sessionClaims);
+      console.error(
+        "No email found in Clerk session claims",
+        auth.sessionClaims
+      );
       return new Response("Unauthorized", { status: 401 });
     }
 
@@ -27,13 +37,17 @@ export async function GET(request) {
         interviewIds = [];
       }
     }
-    console.log('Dashboard API: interviewIds for user', email, interviewIds);
+    console.log("Dashboard API: interviewIds for user", email, interviewIds);
 
     let interviews = [];
     if (interviewIds.length > 0) {
-      interviews = await db.select().from(MockInterview).where(inArray(MockInterview.mockId, interviewIds)).orderBy(desc(MockInterview.id));
+      interviews = await db
+        .select()
+        .from(MockInterview)
+        .where(inArray(MockInterview.mockId, interviewIds))
+        .orderBy(desc(MockInterview.id));
     }
-    console.log('Dashboard API: interviews fetched', interviews.length);
+    console.log("Dashboard API: interviews fetched", interviews.length);
 
     const answers = await db
       .select()
@@ -41,16 +55,18 @@ export async function GET(request) {
       .where(eq(UserAnswer.userEmail, email));
 
     const total = interviews.length;
-    const ratings = answers.map(a => Number(a.rating) || 0);
+    const ratings = answers.map((a) => Number(a.rating) || 0);
     let avgScore = 0;
     if (ratings.length) {
       avgScore = ratings.reduce((a, b) => a + b, 0) / ratings.length;
       avgScore = Math.min(avgScore, 5); // Clamp to 5 max
-      avgScore = avgScore.toFixed(1);
+      avgScore = Number(avgScore.toFixed(1)); // Ensure it's a number, not string
     }
     const practiceTime = (total * 0.5).toFixed(1);
     const successRate = ratings.length
-      ? ((ratings.filter(r => r >= 4).length / ratings.length) * 100).toFixed(0) + "%"
+      ? ((ratings.filter((r) => r >= 4).length / ratings.length) * 100).toFixed(
+          0
+        ) + "%"
       : "0%";
 
     const achievements = [

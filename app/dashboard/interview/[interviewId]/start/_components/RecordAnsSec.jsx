@@ -150,10 +150,10 @@ export default function RecordAnsSec({
   return (
     <div className="space-y-6">
       {/* Webcam Card */}
-      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm overflow-hidden">
+      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm overflow-hidden dark:bg-gray-900/95">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">
+            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-300">
               Camera Preview
             </CardTitle>
             <Button
@@ -208,9 +208,9 @@ export default function RecordAnsSec({
       </Card>
 
       {/* Recording Controls */}
-      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm dark:bg-gray-900/95 ">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">
+          <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-300">
             Record Your Answer
           </CardTitle>
         </CardHeader>
@@ -273,10 +273,10 @@ export default function RecordAnsSec({
                     <Mic className="w-8 h-8 text-gray-400" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-gray-700">
+                    <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
                       Ready to Record
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       Click the button below to start
                     </p>
                   </div>
@@ -336,7 +336,8 @@ export default function RecordAnsSec({
                 </>
               )}
             </Button>
-
+          </div>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-2">
             {userAnswer && !isRecording && !loading && (
               <div className="flex flex-row gap-2 w-full md:w-auto">
                 <Button
@@ -362,8 +363,8 @@ export default function RecordAnsSec({
           </div>
 
           {/* Instructions */}
-          <div className="bg-gray-50 rounded-lg p-4 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="bg-gray-50 rounded-lg p-4 text-center dark:bg-gray-900/95 dark:text-gray-500">
+            <p className="text-sm text-gray-400">
               {process.env.NEXT_PUBLIC_INFORMATION ||
                 "Speak clearly and naturally. Your response will be automatically transcribed and analyzed by AI."}
             </p>

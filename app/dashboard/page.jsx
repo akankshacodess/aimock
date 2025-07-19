@@ -40,7 +40,11 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+
 import { chatSession } from "../../utils/AiGemini";
+
+// Use absolute API URL for deployment compatibility
+const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export default function Dashboard() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -66,7 +70,7 @@ export default function Dashboard() {
       try {
         // Use the custom JWT template for Clerk
         const token = await getToken({ template: "aimock" }); // <-- specify your template name here
-        const res = await fetch("/api/dashboard", {
+        const res = await fetch(`${baseURL}/api/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -157,7 +161,7 @@ export default function Dashboard() {
 
     try {
       const token = await getToken({ template: "aimock" });
-      const resp = await fetch("/api/interview/create", {
+      const resp = await fetch(`${baseURL}/api/interview/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -198,9 +202,12 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen w-full box-border bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500" style={{overflowX: "hidden"}}>
+    <div
+      className="min-h-screen w-full box-border bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500"
+      style={{ overflowX: "hidden" }}
+    >
       {/* Header Section */}
-      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-16 z-40 shadow-sm ">
+      <div className="bg-white/80 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-40 shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <motion.div
@@ -259,10 +266,12 @@ export default function Dashboard() {
           )}
         </div>
       </div>
-      
 
       {/* Main Content Area */}
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10" style={{boxSizing: "border-box"}}>
+      <main
+        className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10"
+        style={{ boxSizing: "border-box" }}
+      >
         {/* Stats Grid (dynamic) */}
         <div className="py-6 w-full">
           <motion.div
@@ -664,7 +673,7 @@ export default function Dashboard() {
                       )}
                     </div>
                   ))
-               ) }
+                )}
               </CardContent>
             </Card>
 
@@ -790,4 +799,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

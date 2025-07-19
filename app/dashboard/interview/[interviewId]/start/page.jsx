@@ -47,7 +47,7 @@ export default function StartInterview({ params }) {
   const [mockInterviewQuestion, setMockInterviewQuestion] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [recordingState, setRecordingState] = useState(false);
-  const completedQuestions = new Set();
+  const [completedQuestions, setCompletedQuestions] = useState(new Set());
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
 
@@ -67,7 +67,6 @@ export default function StartInterview({ params }) {
     setQuestionStartTime(Date.now());
     setTimeElapsed(0);
   }, [activeQuestionIndex]);
-
   // Mark a question as complete
   const handleQuestionComplete = (questionIndex) => {
     setCompletedQuestions((prev) => new Set(prev).add(questionIndex));
@@ -131,9 +130,9 @@ export default function StartInterview({ params }) {
   const progressPercentage = (completedCount / totalQuestions) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-500">
       {/* Header with Progress */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
+      <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
@@ -141,30 +140,30 @@ export default function StartInterview({ params }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   Mock Interview
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {interviewData?.jobPosition}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                 <Clock className="w-4 h-4" />
                 <span>{formatTime(timeElapsed)}</span>
               </div>
               <Badge
                 variant="outline"
-                className="bg-blue-50 text-blue-700 border-blue-200"
+                className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-700"
               >
                 Question {activeQuestionIndex + 1} of{" "}
                 {mockInterviewQuestion.length}
@@ -173,11 +172,14 @@ export default function StartInterview({ params }) {
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-gray-600">
+            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
               <span>Progress</span>
               <span>{Math.round(progressPercentage)}% Complete</span>
             </div>
-            <Progress value={progressPercentage} className="h-2" />
+            <Progress
+              value={progressPercentage}
+              className="h-2 bg-gray-200 dark:bg-gray-800"
+            />
           </div>
         </div>
       </div>
@@ -185,7 +187,7 @@ export default function StartInterview({ params }) {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Questions Panel */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 ">
             <QuestionsSec
               mockInterviewQuestion={mockInterviewQuestion}
               activeQuestionIndex={activeQuestionIndex}
@@ -195,7 +197,7 @@ export default function StartInterview({ params }) {
             />
 
             {/* Navigation Controls */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <Button
@@ -206,7 +208,7 @@ export default function StartInterview({ params }) {
                       )
                     }
                     disabled={activeQuestionIndex === 0 || recordingState}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Previous
@@ -221,8 +223,8 @@ export default function StartInterview({ params }) {
                           index === activeQuestionIndex
                             ? "bg-blue-600 text-white shadow-lg"
                             : completedQuestions.has(index)
-                            ? "bg-green-100 text-green-700 border border-green-200"
-                            : "bg-gray-100 text-gray-600"
+                            ? "bg-green-100 text-green-700 border border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700"
+                            : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
                         }`}
                       >
                         {completedQuestions.has(index) ? (
@@ -245,7 +247,7 @@ export default function StartInterview({ params }) {
                         )
                       }
                       disabled={recordingState}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800 dark:text-white"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />
@@ -256,7 +258,7 @@ export default function StartInterview({ params }) {
                     >
                       <Button
                         disabled={recordingState}
-                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 dark:text-white"
                       >
                         <CheckCircle className="w-4 h-4" />
                         Finish Interview
@@ -269,7 +271,7 @@ export default function StartInterview({ params }) {
           </div>
 
           {/* Recording Panel */}
-          <div className="space-y-6">
+          <div className="space-y-6 ">
             <RecordAnsSec
               mockInterviewQuestion={mockInterviewQuestion}
               activeQuestionIndex={activeQuestionIndex}
@@ -280,7 +282,7 @@ export default function StartInterview({ params }) {
             />
 
             {/* Tips Panel */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:from-blue-900 dark:to-purple-900 dark:text-white">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
                   <Lightbulb className="w-5 h-5 mr-2" />
