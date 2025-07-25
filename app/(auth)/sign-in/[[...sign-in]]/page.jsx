@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { SignIn } from "@clerk/nextjs"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { ArrowLeft, Brain, Target, Zap, CheckCircle, Star } from "lucide-react"
+import { SignIn } from "@clerk/nextjs";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowLeft, Brain, Target, Zap, CheckCircle, Star } from "lucide-react";
 
 export default function SignInPage() {
   const features = [
@@ -22,22 +22,24 @@ export default function SignInPage() {
       title: "Practice Anywhere",
       description: "Take mock interviews anytime, anywhere",
     },
-  ]
+  ];
 
   const testimonials = [
     {
       name: "Sarah Chen",
       role: "Software Engineer at Google",
-      content: "This platform helped me land my dream job! The AI feedback was incredibly detailed.",
+      content:
+        "This platform helped me land my dream job! The AI feedback was incredibly detailed.",
       rating: 5,
     },
     {
       name: "Michael Rodriguez",
       role: "Product Manager at Microsoft",
-      content: "The mock interviews felt so real. I went into my actual interview with complete confidence.",
+      content:
+        "The mock interviews felt so real. I went into my actual interview with complete confidence.",
       rating: 5,
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -74,7 +76,8 @@ export default function SignInPage() {
                   Welcome Back to Your Interview Success Journey
                 </h2>
                 <p className="text-xl text-blue-100 leading-relaxed">
-                  Continue practicing with AI-powered mock interviews and get the job you deserve.
+                  Continue practicing with AI-powered mock interviews and get
+                  the job you deserve.
                 </p>
               </div>
 
@@ -88,10 +91,14 @@ export default function SignInPage() {
                     transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
                     className="flex items-start space-x-3"
                   >
-                    <div className="p-2 bg-white/20 rounded-lg">{feature.icon}</div>
+                    <div className="p-2 bg-white/20 rounded-lg">
+                      {feature.icon}
+                    </div>
                     <div>
                       <h3 className="font-semibold">{feature.title}</h3>
-                      <p className="text-blue-100 text-sm">{feature.description}</p>
+                      <p className="text-blue-100 text-sm">
+                        {feature.description}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
@@ -128,15 +135,24 @@ export default function SignInPage() {
             className="mt-12 space-y-4"
           >
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <div
+                key={index}
+                className="bg-white/10 backdrop-blur-sm rounded-xl p-4"
+              >
                 <div className="flex items-center mb-2">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-yellow-400 fill-yellow-400"
+                    />
                   ))}
                 </div>
-                <p className="text-sm italic mb-2">&quot;{testimonial.content}&quot;</p>
+                <p className="text-sm italic mb-2">
+                  &quot;{testimonial.content}&quot;
+                </p>
                 <div className="text-xs text-blue-200">
-                  <span className="font-semibold">{testimonial.name}</span> - {testimonial.role}
+                  <span className="font-semibold">{testimonial.name}</span> -{" "}
+                  {testimonial.role}
                 </div>
               </div>
             ))}
@@ -163,13 +179,15 @@ export default function SignInPage() {
             {/* Header */}
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
-              <p className="text-gray-600">Welcome back! Please sign in to your account.</p>
+              <p className="text-gray-600">
+                Welcome back! Please sign in to your account.
+              </p>
             </div>
 
             {/* Clerk Sign In Component */}
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
               <SignIn
-                afterSignInUrl="/dashboard"
+                fallbackRedirectUrl="/dashboard"
                 appearance={{
                   elements: {
                     formButtonPrimary:
@@ -179,8 +197,10 @@ export default function SignInPage() {
                     headerSubtitle: "hidden",
                     socialButtonsBlockButton:
                       "border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 rounded-xl",
-                    formFieldInput: "border-2 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg",
-                    footerActionLink: "text-blue-600 hover:text-blue-700 font-semibold",
+                    formFieldInput:
+                      "border-2 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg",
+                    footerActionLink:
+                      "text-blue-600 hover:text-blue-700 font-semibold",
                   },
                 }}
               />
@@ -205,10 +225,18 @@ export default function SignInPage() {
 
       <style jsx>{`
         @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
         }
         .animate-blob {
           animation: blob 7s infinite;
@@ -218,5 +246,5 @@ export default function SignInPage() {
         }
       `}</style>
     </div>
-  )
+  );
 }
