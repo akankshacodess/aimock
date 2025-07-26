@@ -48,6 +48,7 @@ A production-ready, full-stack AI-powered mock interview platform built with Nex
 - Neon/Postgres (Database)
 - Drizzle ORM
 - Tailwind CSS
+- Gemini AI API
 
 ## Project Structure
 - `app/` — Next.js app, API routes, dashboard, interview pages
