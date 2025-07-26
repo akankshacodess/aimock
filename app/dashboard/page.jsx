@@ -44,7 +44,7 @@ import { useRouter } from "next/navigation";
 import { chatSession } from "../../utils/AiGemini";
 
 // Use absolute API URL for deployment compatibility
-const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const baseURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export default function Dashboard() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -70,7 +70,7 @@ export default function Dashboard() {
       try {
         // Use the custom JWT template for Clerk
         const token = await getToken({ template: "aimock" }); // <-- specify your template name here
-        const res = await fetch(`${baseURL}/api/dashboard`, {
+        const res = await fetch(`/api/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -143,7 +143,7 @@ export default function Dashboard() {
     ) {
       // Try to get string from .text() if available (old API)
       if (typeof result.response.text === "function") {
-        MockJSONResp = await result.response.text();
+        MockJSONResp = result.response.text();
         MockJSONResp = MockJSONResp.replace("```json", "").replace("```", "");
       } else {
         // Fallback: try JSON.stringify
